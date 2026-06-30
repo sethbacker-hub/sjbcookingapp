@@ -1,19 +1,13 @@
 import { NextRequest, NextResponse } from "next/server"
-import { createOpenAI } from "@ai-sdk/openai"
+import { createVercel } from "@ai-sdk/vercel"
 import { generateText } from "ai"
 
 export const runtime = "nodejs"
 export const dynamic = "force-dynamic"
 export const maxDuration = 60
 
-// Vercel AI Gateway — compatibility:'compatible' skips OpenAI key validation.
-const gateway = createOpenAI({
-  baseURL: `${process.env.VERCEL_AI_GATEWAY_URL || "https://ai-gateway.vercel.com"}/v1`,
-  apiKey: process.env.AI_GATEWAY_API_KEY || "",
-  compatibility: "compatible",
-})
-
-const model = gateway("anthropic/claude-sonnet-4-6")
+const vercelProvider = createVercel({ apiKey: process.env.AI_GATEWAY_API_KEY || "" })
+const model = vercelProvider("gpt-4o")
 
 export async function POST(request: NextRequest) {
   const { ingredients, imageBase64, cuisine, modifier } = await request.json()

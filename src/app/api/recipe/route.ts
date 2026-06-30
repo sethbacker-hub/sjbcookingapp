@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
+import { createVercel } from "@ai-sdk/vercel"
+import { generateText } from "ai"
 
 export const runtime = "nodejs"
 export const dynamic = "force-dynamic"
@@ -9,19 +11,16 @@ export async function GET() {
     ok: true,
     route: "/api/recipe",
     model: "gpt-4o",
-    gateway: process.env.VERCEL_AI_GATEWAY_URL || "https://ai-gateway.vercel.com/v1/sjbcookingapp",
-    hasOidcToken: !!process.env.VERCEL_OIDC_TOKEN,
+    gateway: "Vercel AI Gateway (@ai-sdk/vercel)",
+    hasApiKey: !!process.env.AI_GATEWAY_API_KEY,
   })
 }
 
 export async function POST(request: NextRequest) {
-  const gatewayUrl = process.env.VERCEL_AI_GATEWAY_URL || "https://ai-gateway.vercel.com/v1/sjbcookingapp"
-  // VERCEL_OIDC_TOKEN is automatically injected by Vercel into all deployments —
-  // no manual secret needed. It authenticates the call to the AI Gateway.
-  const apiKey = process.env.VERCEL_OIDC_TOKEN
+  const apiKey = process.env.AI_GATEWAY_API_KEY
   if (!apiKey) {
     return NextResponse.json(
-      { error: "VERCEL_OIDC_TOKEN is not available. This variable is injected automatically by Vercel — make sure the app is deployed on Vercel, not running locally." },
+      { error: "AI_GATEWAY_API_KEY is not set. Add it in your Vercel project environment variables." },
       { status: 500 }
     )
   }
@@ -68,46 +67,34 @@ export async function POST(request: NextRequest) {
     ? `Identify the food ingredients visible in this image${ingredients ? `, along with these additional ingredients: ${ingredients}` : ""}. Then create a ${cuisineLabel} recipe using them. ${modifierNote}\n\nReturn ONLY this JSON structure, filled in:\n${jsonTemplate}`
     : `Create a ${cuisineLabel} recipe using these ingredients: ${ingredients}. ${modifierNote}\n\nReturn ONLY this JSON structure, filled in:\n${jsonTemplate}`
 
-  // Build OpenAI message content — supports vision (gpt-4o handles image_url)
   type ContentPart =
     | { type: "text"; text: string }
-    | { type: "image_url"; image_url: { url: string; detail: "auto" } }
+    | { type: "image"; image: string; mimeType?: string }
 
   const userContent: string | ContentPart[] = imageBase64
     ? [
-        { type: "image_url", image_url: { url: imageBase64, detail: "auto" } },
+        { type: "image", image: imageBase64 },
         { type: "text", text: textPrompt },
       ]
     : textPrompt
 
-  const openaiRes = await fetch(`${gatewayUrl}/chat/completions`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${apiKey}`,
-    },
-    body: JSON.stringify({
-      model: "gpt-4o",
-      messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: userContent },
-      ],
-      max_tokens: 2048,
+  const vercel = createVercel({ apiKey })
+
+  let rawText: string
+  try {
+    const result = await generateText({
+      model: vercel("gpt-4o"),
+      system: systemPrompt,
+      messages: [{ role: "user", content: userContent }],
+      maxOutputTokens: 2048,
       temperature: 0.7,
-    }),
-  })
-
-  if (!openaiRes.ok) {
-    const errText = await openaiRes.text()
-    console.error("[recipe] gateway error:", openaiRes.status, errText)
-    return NextResponse.json(
-      { error: `OpenAI API ${openaiRes.status}: ${errText}` },
-      { status: 502 }
-    )
+    })
+    rawText = result.text
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err)
+    console.error("[recipe] generateText error:", msg)
+    return NextResponse.json({ error: `AI Gateway error: ${msg}` }, { status: 502 })
   }
-
-  const openaiJson = await openaiRes.json()
-  const rawText: string = openaiJson.choices?.[0]?.message?.content ?? ""
 
   let recipe: Record<string, unknown>
   try {
