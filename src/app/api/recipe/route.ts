@@ -9,16 +9,21 @@ export async function GET() {
     ok: true,
     route: "/api/recipe",
     model: "gpt-4o",
-    gateway: process.env.VERCEL_AI_GATEWAY_URL || "(not set)",
-    hasKey: !!process.env.AI_GATEWAY_API_KEY,
+    gateway: process.env.VERCEL_AI_GATEWAY_URL || "https://ai-gateway.vercel.com/v1/sjbcookingapp",
+    hasOidcToken: !!process.env.VERCEL_OIDC_TOKEN,
   })
 }
 
 export async function POST(request: NextRequest) {
   const gatewayUrl = process.env.VERCEL_AI_GATEWAY_URL || "https://ai-gateway.vercel.com/v1/sjbcookingapp"
-  const apiKey = process.env.AI_GATEWAY_API_KEY
+  // VERCEL_OIDC_TOKEN is automatically injected by Vercel into all deployments —
+  // no manual secret needed. It authenticates the call to the AI Gateway.
+  const apiKey = process.env.VERCEL_OIDC_TOKEN
   if (!apiKey) {
-    return NextResponse.json({ error: "AI_GATEWAY_API_KEY environment variable is not set" }, { status: 500 })
+    return NextResponse.json(
+      { error: "VERCEL_OIDC_TOKEN is not available. This variable is injected automatically by Vercel — make sure the app is deployed on Vercel, not running locally." },
+      { status: 500 }
+    )
   }
 
   let body: Record<string, unknown>
