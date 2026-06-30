@@ -83,7 +83,7 @@ export async function POST(request: NextRequest) {
   let rawText: string
   try {
     const result = await generateText({
-      model: vercel("openai/gpt-4o"),
+      model: vercel("anthropic/claude-sonnet-4-6"),
       system: systemPrompt,
       messages: [{ role: "user", content: userContent }],
       maxOutputTokens: 2048,
