@@ -94,7 +94,7 @@ export default function CookingApp() {
         body: JSON.stringify({ ingredients, imageBase64, cuisine, modifier }),
       })
 
-      if (!res.ok || !res.body) throw new Error("Request failed")
+      if (!res.ok || !res.body) throw new Error(`Request failed: ${res.status} ${res.statusText}`)
 
       const reader = res.body.getReader()
       const decoder = new TextDecoder()

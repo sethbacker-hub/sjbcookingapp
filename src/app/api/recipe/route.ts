@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { createOpenAI } from "@ai-sdk/openai"
 import { generateText } from "ai"
+import { formatRecipe } from "@/lib/formatRecipe"
 
 export const runtime = "nodejs"
 export const dynamic = "force-dynamic"
@@ -101,27 +102,10 @@ Return ONLY this JSON structure, nothing else:
         ],
       })
 
-      // ── Step 3: Format via Sandbox endpoint ────────────────────────────────
+      // ── Step 3: Format (Sandbox step — called as a function, not HTTP) ──────
       await send({ step: "formatting", message: "Formatting your recipe card..." })
 
-      // Resolve the format URL robustly for both Vercel and local dev
-      const baseUrl = process.env.VERCEL_URL
-        ? `https://${process.env.VERCEL_URL}`
-        : process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
-
-      const formatRes = await fetch(`${baseUrl}/api/format`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ rawRecipe: recipeText, cuisine: cuisineLabel }),
-      })
-
-      if (!formatRes.ok) {
-        await send({ step: "error", message: "Failed to format recipe. Please try again." })
-        await writer.close()
-        return
-      }
-
-      const formatted = await formatRes.json()
+      const formatted = formatRecipe(recipeText, cuisineLabel)
       const recipe = { ...formatted, id: crypto.randomUUID(), cuisine: cuisineLabel }
 
       await send({ step: "complete", recipe })
