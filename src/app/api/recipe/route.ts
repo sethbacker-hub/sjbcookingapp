@@ -1,127 +1,115 @@
 import { NextRequest, NextResponse } from "next/server"
-import { createOpenAI } from "@ai-sdk/openai"
-import { generateText } from "ai"
-import { formatRecipe } from "@/lib/formatRecipe"
 
 export const runtime = "nodejs"
 export const dynamic = "force-dynamic"
 export const maxDuration = 60
 
-// Vercel AI Gateway — compatibility:'compatible' skips OpenAI key validation
-// so the gateway token is accepted as-is.
-const gateway = createOpenAI({
-  baseURL: `${process.env.VERCEL_AI_GATEWAY_URL || "https://ai-gateway.vercel.com"}/v1`,
-  apiKey: process.env.AI_GATEWAY_API_KEY || "",
-  compatibility: "compatible",
-})
-
-const model = gateway("anthropic/claude-sonnet-4-6")
-
 export async function POST(request: NextRequest) {
-  // Client sends: { ingredients, imageBase64, cuisine, modifier }
   const { ingredients, imageBase64, cuisine, modifier } = await request.json()
 
-  const encoder = new TextEncoder()
-  const stream = new TransformStream()
-  const writer = stream.writable.getWriter()
-
-  const send = async (data: Record<string, unknown>) => {
-    await writer.write(encoder.encode(`data: ${JSON.stringify(data)}\n\n`))
+  if (!ingredients && !imageBase64) {
+    return NextResponse.json({ error: "No ingredients provided" }, { status: 400 })
   }
 
-  ;(async () => {
-    try {
-      // ── Step 1: Identify ingredients (Workflow Step 1) ─────────────────────
-      await send({ step: "analyzing", message: "Analyzing your ingredients..." })
+  const gatewayUrl = process.env.VERCEL_AI_GATEWAY_URL || "https://ai-gateway.vercel.com"
+  const apiKey = process.env.AI_GATEWAY_API_KEY || ""
 
-      let identifiedIngredients: string = ingredients || ""
+  const cuisineMap: Record<string, string> = {
+    italian: "Italian",
+    japanese: "Japanese",
+    mexican: "Mexican",
+    surprise: "any creative international",
+  }
+  const cuisineLabel = cuisineMap[cuisine] || "any"
 
-      if (imageBase64) {
-        type ImageContent = { type: "image"; image: string }
-        type TextContent = { type: "text"; text: string }
-        const content: Array<ImageContent | TextContent> = [
-          { type: "image", image: imageBase64 },
-          {
-            type: "text",
-            text: `List every food ingredient, produce item, protein, and pantry item visible in this image.${
-              ingredients ? ` Also include these additional ingredients: ${ingredients}.` : ""
-            } Return a comma-separated list of ingredients only, nothing else.`,
-          },
-        ]
+  const modifierMap: Record<string, string> = {
+    healthier: "Make it as healthy as possible — reduce fat, increase fiber and protein.",
+    faster: "Make it as quick as possible — under 20 minutes total.",
+    "less-ingredients": "Use the fewest ingredients possible.",
+  }
+  const modifierNote = modifier ? (modifierMap[modifier] ?? "") : ""
 
-        const { text } = await generateText({
-          model,
-          messages: [{ role: "user", content }],
-        })
-        identifiedIngredients = text.trim()
-      }
+  // Build the messages array for the AI call
+  type MessageContent =
+    | string
+    | Array<
+        | { type: "text"; text: string }
+        | { type: "image_url"; image_url: { url: string } }
+      >
 
-      if (!identifiedIngredients) {
-        await send({ step: "error", message: "No ingredients found. Please type some ingredients or upload a photo." })
-        await writer.close()
-        return
-      }
+  const userContent: MessageContent = imageBase64
+    ? [
+        { type: "image_url", image_url: { url: imageBase64 } },
+        {
+          type: "text",
+          text: `Identify the ingredients visible in this image${ingredients ? `, plus these additional ingredients: ${ingredients}` : ""}. Then create a ${cuisineLabel} recipe. ${modifierNote}
 
-      // ── Step 2: Generate recipe (Workflow Step 2) ──────────────────────────
-      await send({ step: "generating", message: "Generating your recipe..." })
+Return ONLY this JSON, no markdown:
+{"name":"","ingredients":[],"instructions":[],"macros":{"calories":0,"protein":0,"carbs":0,"fat":0},"healthScore":0,"healthSummary":"","cuisine":"${cuisineLabel}"}`,
+        },
+      ]
+    : `Create a ${cuisineLabel} recipe using: ${ingredients}. ${modifierNote}
 
-      const cuisineMap: Record<string, string> = {
-        italian: "Italian",
-        japanese: "Japanese",
-        mexican: "Mexican",
-        surprise: "any creative international",
-      }
-      const cuisineLabel = cuisineMap[cuisine] || "any"
+Return ONLY this JSON, no markdown:
+{"name":"","ingredients":[],"instructions":[],"macros":{"calories":0,"protein":0,"carbs":0,"fat":0},"healthScore":0,"healthSummary":"","cuisine":"${cuisineLabel}"}`
 
-      const modifierMap: Record<string, string> = {
-        healthier: "Make it as healthy as possible — reduce fat, increase fiber and protein, use healthier cooking methods.",
-        faster: "Make it as quick as possible — aim for under 20 minutes total, suggest shortcuts.",
-        "less-ingredients": "Simplify to use the fewest ingredients possible while keeping it delicious.",
-      }
-      const modifierNote = modifier ? (modifierMap[modifier] ?? "") : ""
-
-      const { text: recipeText } = await generateText({
-        model,
-        system: "You are a professional chef and nutritionist. Return ONLY valid JSON, no markdown, no code blocks.",
-        messages: [
-          {
-            role: "user",
-            content: `Create a ${cuisineLabel} recipe using these ingredients: ${identifiedIngredients}. ${modifierNote}
-
-Return ONLY this JSON structure, nothing else:
-{
-  "name": "Recipe Name",
-  "ingredients": ["ingredient 1 with quantity", "ingredient 2 with quantity"],
-  "instructions": ["Step 1: ...", "Step 2: ..."],
-  "macros": { "calories": 450, "protein": 35, "carbs": 40, "fat": 12 },
-  "healthScore": 8,
-  "healthSummary": "High protein, low carb — great post-workout meal",
-  "cuisine": "${cuisineLabel}"
-}`,
-          },
-        ],
-      })
-
-      // ── Step 3: Format (Sandbox step — called as a function, not HTTP) ──────
-      await send({ step: "formatting", message: "Formatting your recipe card..." })
-
-      const formatted = formatRecipe(recipeText, cuisineLabel)
-      const recipe = { ...formatted, id: crypto.randomUUID(), cuisine: cuisineLabel }
-
-      await send({ step: "complete", recipe })
-    } catch (err) {
-      const message = err instanceof Error ? err.message : "An unexpected error occurred"
-      await send({ step: "error", message })
-    } finally {
-      await writer.close()
-    }
-  })()
-
-  return new NextResponse(stream.readable, {
+  const aiRes = await fetch(`${gatewayUrl}/v1/chat/completions`, {
+    method: "POST",
     headers: {
-      "Content-Type": "text/event-stream",
-      "Cache-Control": "no-cache",
-      Connection: "keep-alive",
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${apiKey}`,
     },
+    body: JSON.stringify({
+      model: "anthropic/claude-sonnet-4-6",
+      messages: [
+        {
+          role: "system",
+          content:
+            "You are a professional chef and nutritionist. Always return ONLY valid JSON — no markdown, no code blocks, no explanation.",
+        },
+        { role: "user", content: userContent },
+      ],
+    }),
+  })
+
+  if (!aiRes.ok) {
+    const errText = await aiRes.text()
+    return NextResponse.json(
+      { error: `AI Gateway error: ${aiRes.status} — ${errText}` },
+      { status: 502 }
+    )
+  }
+
+  const aiJson = await aiRes.json()
+  const rawText: string = aiJson.choices?.[0]?.message?.content ?? ""
+
+  // Parse the recipe JSON from the model response
+  let recipe: Record<string, unknown>
+  try {
+    const match = rawText.match(/\{[\s\S]*\}/)
+    recipe = JSON.parse(match ? match[0] : rawText)
+  } catch {
+    return NextResponse.json(
+      { error: `Failed to parse recipe JSON. Raw response: ${rawText.slice(0, 200)}` },
+      { status: 500 }
+    )
+  }
+
+  // Normalise and return
+  const macros = (recipe.macros ?? {}) as Record<string, unknown>
+  return NextResponse.json({
+    id: crypto.randomUUID(),
+    name: String(recipe.name ?? "Mystery Recipe"),
+    ingredients: Array.isArray(recipe.ingredients) ? recipe.ingredients.map(String) : [],
+    instructions: Array.isArray(recipe.instructions) ? recipe.instructions.map(String) : [],
+    macros: {
+      calories: Number(macros.calories) || 400,
+      protein: Number(macros.protein) || 25,
+      carbs: Number(macros.carbs) || 45,
+      fat: Number(macros.fat) || 15,
+    },
+    healthScore: Math.min(10, Math.max(1, Number(recipe.healthScore) || 7)),
+    healthSummary: String(recipe.healthSummary ?? "A balanced, nutritious meal"),
+    cuisine: cuisineLabel,
   })
 }

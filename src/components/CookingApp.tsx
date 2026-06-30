@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import RecipeCard from "@/components/RecipeCard"
 import SavedRecipesDrawer from "@/components/SavedRecipesDrawer"
-import { Recipe, CuisineType, WorkflowStep, ModifierType } from "@/types/recipe"
+import { Recipe, CuisineType, ModifierType } from "@/types/recipe"
 import { ChefHat, Upload, X, BookOpen, Loader2, AlertCircle } from "lucide-react"
 import { cn } from "@/lib/utils"
 
@@ -24,7 +24,6 @@ export default function CookingApp() {
   const [imagePreview, setImagePreview] = useState<string | null>(null)
   const [cuisine, setCuisine] = useState<CuisineType>("surprise")
   const [recipe, setRecipe] = useState<Recipe | null>(null)
-  const [workflowStep, setWorkflowStep] = useState<WorkflowStep | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [savedRecipes, setSavedRecipes] = useState<Recipe[]>([])
@@ -94,37 +93,17 @@ export default function CookingApp() {
         body: JSON.stringify({ ingredients, imageBase64, cuisine, modifier }),
       })
 
-      if (!res.ok || !res.body) throw new Error(`Request failed: ${res.status} ${res.statusText}`)
+      const data = await res.json()
 
-      const reader = res.body.getReader()
-      const decoder = new TextDecoder()
-      let buffer = ""
-
-      while (true) {
-        const { done, value } = await reader.read()
-        if (done) break
-        buffer += decoder.decode(value, { stream: true })
-        const lines = buffer.split("\n")
-        buffer = lines.pop() || ""
-        for (const line of lines) {
-          if (!line.startsWith("data: ")) continue
-          const data = JSON.parse(line.slice(6))
-          if (data.step === "complete") {
-            setRecipe(data.recipe)
-            setWorkflowStep(null)
-          } else if (data.step === "error") {
-            setError(data.message)
-            setWorkflowStep(null)
-          } else {
-            setWorkflowStep({ step: data.step, message: data.message })
-          }
-        }
+      if (!res.ok) {
+        throw new Error(data.error || `Request failed: ${res.status} ${res.statusText}`)
       }
+
+      setRecipe(data)
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong. Please try again.")
     } finally {
       setIsLoading(false)
-      setWorkflowStep(null)
     }
   }
 
@@ -271,23 +250,10 @@ export default function CookingApp() {
         </Card>
 
         {/* Loading state */}
-        {isLoading && workflowStep && (
+        {isLoading && (
           <div className="flex items-center gap-3 rounded-xl border bg-white p-4 shadow-sm">
             <Loader2 className="h-5 w-5 animate-spin text-orange-500 shrink-0" />
-            <div>
-              <p className="text-sm font-semibold text-gray-800">{workflowStep.message}</p>
-              <div className="flex gap-1 mt-2">
-                {["analyzing", "generating", "formatting"].map((s) => (
-                  <div
-                    key={s}
-                    className={cn(
-                      "h-1.5 rounded-full transition-all duration-300",
-                      workflowStep.step === s ? "w-8 bg-orange-500" : "w-3 bg-gray-200"
-                    )}
-                  />
-                ))}
-              </div>
-            </div>
+            <p className="text-sm font-semibold text-gray-800">Finding you a recipe...</p>
           </div>
         )}
 
