@@ -80,7 +80,7 @@ export async function POST(request: NextRequest) {
 
   const vercel = createVercel({
     apiKey,
-    baseURL: "https://ai-gateway.vercel.com/v1/sjbcookingapp",
+    baseURL: "https://ai-gateway.vercel.com/v1/sethbacker-1015s-projects/sjbcookingapp",
   })
 
   let rawText: string

@@ -8,7 +8,7 @@ export const maxDuration = 60
 
 const vercelProvider = createVercel({
   apiKey: process.env.AI_GATEWAY_API_KEY || "",
-  baseURL: "https://ai-gateway.vercel.com/v1/sjbcookingapp",
+  baseURL: "https://ai-gateway.vercel.com/v1/sethbacker-1015s-projects/sjbcookingapp",
 })
 const model = vercelProvider("gpt-4o-mini")
 
