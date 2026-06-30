@@ -13,6 +13,7 @@
     "react": "^18",
     "react-dom": "^18",
     "ai": "5.0.209",
+    "@ai-sdk/openai": "2.0.110",
     "@ai-sdk/vercel": "1.0.43",
     "@radix-ui/react-dialog": "^1.1.1",
     "@radix-ui/react-progress": "^1.1.0",

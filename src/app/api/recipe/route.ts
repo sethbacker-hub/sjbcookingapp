@@ -1,18 +1,16 @@
 import { NextRequest, NextResponse } from "next/server"
+import { streamText, createProviderRegistry } from "ai"
+import { createOpenAI } from "@ai-sdk/openai"
 
 export const runtime = "nodejs"
 export const dynamic = "force-dynamic"
 export const maxDuration = 60
 
-const GATEWAY_URL =
-  "https://ai-gateway.vercel.com/v1/sethbacker-1015s-projects/sjbcookingapp/chat/completions"
-
 export async function GET() {
   return NextResponse.json({
     ok: true,
     route: "/api/recipe",
-    model: "gpt-4o-mini",
-    gateway: GATEWAY_URL,
+    model: "openai/gpt-4o-mini",
     hasApiKey: !!process.env.AI_GATEWAY_API_KEY,
   })
 }
@@ -70,50 +68,34 @@ export async function POST(request: NextRequest) {
 
   type ContentPart =
     | { type: "text"; text: string }
-    | { type: "image_url"; image_url: { url: string; detail: "auto" } }
+    | { type: "image"; image: string }
 
   const userContent: string | ContentPart[] = imageBase64
     ? [
-        { type: "image_url", image_url: { url: imageBase64, detail: "auto" } },
+        { type: "image", image: imageBase64 },
         { type: "text", text: textPrompt },
       ]
     : textPrompt
 
-  let gatewayRes: Response
+  const registry = createProviderRegistry({
+    openai: createOpenAI({ apiKey }),
+  })
+
+  let rawText: string
   try {
-    gatewayRes = await fetch(GATEWAY_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify({
-        model: "gpt-4o-mini",
-        messages: [
-          { role: "system", content: systemPrompt },
-          { role: "user", content: userContent },
-        ],
-        max_tokens: 2048,
-        temperature: 0.7,
-      }),
+    const result = streamText({
+      model: registry.languageModel("openai:gpt-4o-mini"),
+      system: systemPrompt,
+      messages: [{ role: "user", content: userContent }],
+      maxOutputTokens: 2048,
+      temperature: 0.7,
     })
+    rawText = await result.text
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err)
-    console.error("[recipe] fetch error:", msg)
-    return NextResponse.json({ error: `Gateway fetch error: ${msg}` }, { status: 502 })
+    console.error("[recipe] streamText error:", msg)
+    return NextResponse.json({ error: `AI error: ${msg}` }, { status: 502 })
   }
-
-  if (!gatewayRes.ok) {
-    const errText = await gatewayRes.text()
-    console.error("[recipe] gateway error:", gatewayRes.status, errText)
-    return NextResponse.json(
-      { error: `AI Gateway ${gatewayRes.status}: ${errText}` },
-      { status: 502 }
-    )
-  }
-
-  const gatewayJson = await gatewayRes.json()
-  const rawText: string = gatewayJson.choices?.[0]?.message?.content ?? ""
 
   let recipe: Record<string, unknown>
   try {
