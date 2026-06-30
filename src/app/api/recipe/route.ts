@@ -9,14 +9,16 @@ export async function GET() {
     ok: true,
     route: "/api/recipe",
     model: "gpt-4o",
-    hasKey: !!process.env.OPENAI_API_KEY,
+    gateway: process.env.VERCEL_AI_GATEWAY_URL || "(not set)",
+    hasKey: !!process.env.AI_GATEWAY_API_KEY,
   })
 }
 
 export async function POST(request: NextRequest) {
-  const apiKey = process.env.OPENAI_API_KEY
+  const gatewayUrl = process.env.VERCEL_AI_GATEWAY_URL || "https://ai-gateway.vercel.com/v1/sjbcookingapp"
+  const apiKey = process.env.AI_GATEWAY_API_KEY
   if (!apiKey) {
-    return NextResponse.json({ error: "OPENAI_API_KEY environment variable is not set" }, { status: 500 })
+    return NextResponse.json({ error: "AI_GATEWAY_API_KEY environment variable is not set" }, { status: 500 })
   }
 
   let body: Record<string, unknown>
@@ -73,7 +75,7 @@ export async function POST(request: NextRequest) {
       ]
     : textPrompt
 
-  const openaiRes = await fetch("https://api.openai.com/v1/chat/completions", {
+  const openaiRes = await fetch(`${gatewayUrl}/chat/completions`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -92,7 +94,7 @@ export async function POST(request: NextRequest) {
 
   if (!openaiRes.ok) {
     const errText = await openaiRes.text()
-    console.error("[recipe] OpenAI error:", openaiRes.status, errText)
+    console.error("[recipe] gateway error:", openaiRes.status, errText)
     return NextResponse.json(
       { error: `OpenAI API ${openaiRes.status}: ${errText}` },
       { status: 502 }
