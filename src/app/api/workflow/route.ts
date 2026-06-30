@@ -2,9 +2,13 @@ import { NextRequest, NextResponse } from "next/server"
 import { createOpenAI } from "@ai-sdk/openai"
 import { generateText } from "ai"
 
+// Vercel AI Gateway uses its own token (AI_GATEWAY_API_KEY), not an OpenAI key.
+// Setting compatibility: 'compatible' disables the OpenAI-specific key validation
+// so the SDK treats it as a generic OpenAI-compatible endpoint.
 const gateway = createOpenAI({
   baseURL: `${process.env.VERCEL_AI_GATEWAY_URL || "https://ai-gateway.vercel.com"}/v1`,
-  apiKey: process.env.VERCEL_AI_GATEWAY_TOKEN || "",
+  apiKey: process.env.AI_GATEWAY_API_KEY || "",
+  compatibility: "compatible",
 })
 
 const model = gateway("anthropic/claude-sonnet-4-6")

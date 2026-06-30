@@ -17,14 +17,14 @@ Set these in your Vercel project under **Settings → Environment Variables**, o
 | Variable | What it is | Where to get it |
 |---|---|---|
 | `VERCEL_AI_GATEWAY_URL` | Base URL for Vercel AI Gateway | Set to `https://ai-gateway.vercel.com` |
-| `VERCEL_AI_GATEWAY_TOKEN` | Auth token for AI Gateway | [Vercel Dashboard → AI Gateway](https://vercel.com/dashboard/ai-gateway) → Create Token |
+| `AI_GATEWAY_API_KEY` | Auth token for Vercel AI Gateway | [Vercel Dashboard → AI Gateway](https://vercel.com/dashboard/ai-gateway) → Create Token |
 | `VERCEL_WORKFLOW_SECRET` | Secret for authenticating workflow triggers | Generate with `openssl rand -hex 32` |
 | `VERCEL_SANDBOX_TOKEN` | Token for Vercel Sandbox execution | [Vercel Docs → Sandbox](https://vercel.com/docs/sandbox) |
 | `VERCEL_TEAM_ID` | Your Vercel team ID | Vercel Dashboard → Settings → General → Team ID |
 | `VERCEL_PROJECT_ID` | Your Vercel project ID | Project → Settings → General → Project ID |
 | `VERCEL_TOKEN` | Vercel personal access token | [Vercel → Account Settings → Tokens](https://vercel.com/account/tokens) |
 
-> **Note:** `VERCEL_AI_GATEWAY_TOKEN` is the only strictly required variable for the app to function. The others are used for the Workflow and Sandbox integrations.
+> **Note:** `AI_GATEWAY_API_KEY` is the only strictly required variable for the app to function. The others are used for the Workflow and Sandbox integrations.
 
 ## Architecture
 
