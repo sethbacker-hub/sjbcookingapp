@@ -14,17 +14,22 @@ An AI-powered recipe generator that takes your ingredients (typed or photographe
 
 Set these in your Vercel project under **Settings → Environment Variables**, or locally in `.env.local`:
 
+The app supports two AI backends — set whichever you have access to:
+
+### Option A — Anthropic direct (simplest, works immediately)
+
 | Variable | What it is | Where to get it |
 |---|---|---|
-| `VERCEL_AI_GATEWAY_URL` | Base URL for Vercel AI Gateway | Set to `https://ai-gateway.vercel.com` |
-| `AI_GATEWAY_API_KEY` | Auth token for Vercel AI Gateway | [Vercel Dashboard → AI Gateway](https://vercel.com/dashboard/ai-gateway) → Create Token |
-| `VERCEL_WORKFLOW_SECRET` | Secret for authenticating workflow triggers | Generate with `openssl rand -hex 32` |
-| `VERCEL_SANDBOX_TOKEN` | Token for Vercel Sandbox execution | [Vercel Docs → Sandbox](https://vercel.com/docs/sandbox) |
-| `VERCEL_TEAM_ID` | Your Vercel team ID | Vercel Dashboard → Settings → General → Team ID |
-| `VERCEL_PROJECT_ID` | Your Vercel project ID | Project → Settings → General → Project ID |
-| `VERCEL_TOKEN` | Vercel personal access token | [Vercel → Account Settings → Tokens](https://vercel.com/account/tokens) |
+| `ANTHROPIC_API_KEY` | Anthropic API key | [console.anthropic.com/settings/keys](https://console.anthropic.com/settings/keys) |
 
-> **Note:** `AI_GATEWAY_API_KEY` is the only strictly required variable for the app to function. The others are used for the Workflow and Sandbox integrations.
+### Option B — Vercel AI Gateway
+
+| Variable | What it is | Where to get it |
+|---|---|---|
+| `VERCEL_AI_GATEWAY_URL` | **Full scoped** gateway URL | Vercel Dashboard → AI Gateway → copy endpoint. Format: `https://ai-gateway.vercel.com/v1/{team}/{gateway}` — **not** the generic domain |
+| `AI_GATEWAY_API_KEY` | Vercel API token | [vercel.com/account/tokens](https://vercel.com/account/tokens) |
+
+> If both are set, the Vercel AI Gateway takes priority. If neither is set, the app returns a 500 with a clear message telling you which variable is missing.
 
 ## Architecture
 
