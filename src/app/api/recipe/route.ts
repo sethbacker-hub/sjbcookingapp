@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { createOpenAI } from "@ai-sdk/openai"
 import { generateText } from "ai"
-import { v4 as uuidv4 } from "uuid"
 
 export const runtime = "nodejs"
 export const dynamic = "force-dynamic"
@@ -123,7 +122,7 @@ Return ONLY this JSON structure, nothing else:
       }
 
       const formatted = await formatRes.json()
-      const recipe = { ...formatted, id: uuidv4(), cuisine: cuisineLabel }
+      const recipe = { ...formatted, id: crypto.randomUUID(), cuisine: cuisineLabel }
 
       await send({ step: "complete", recipe })
     } catch (err) {
