@@ -6,8 +6,11 @@ export const runtime = "nodejs"
 export const dynamic = "force-dynamic"
 export const maxDuration = 60
 
-const vercelProvider = createVercel({ apiKey: process.env.AI_GATEWAY_API_KEY || "" })
-const model = vercelProvider("openai/gpt-4o-mini")
+const vercelProvider = createVercel({
+  apiKey: process.env.AI_GATEWAY_API_KEY || "",
+  baseURL: "https://ai-gateway.vercel.com/v1/sjbcookingapp",
+})
+const model = vercelProvider("gpt-4o-mini")
 
 export async function POST(request: NextRequest) {
   const { ingredients, imageBase64, cuisine, modifier } = await request.json()
