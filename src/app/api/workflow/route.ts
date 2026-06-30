@@ -68,13 +68,12 @@ export async function POST(request: NextRequest) {
       }
       const cuisineLabel = cuisineMap[cuisine] || "any"
 
-      const modifierInstructions = modifier
-        ? {
-            healthier: "Make this recipe as healthy as possible — reduce fat, increase fiber and protein, use healthier cooking methods.",
-            faster: "Optimize this recipe for speed — minimize prep and cook time, suggest shortcuts, aim for under 20 minutes total.",
-            "less-ingredients": "Simplify this recipe to use the fewest ingredients possible while keeping it delicious.",
-          }[modifier] || ""
-        : ""
+      const modifierMap: Record<string, string> = {
+        healthier: "Make this recipe as healthy as possible — reduce fat, increase fiber and protein, use healthier cooking methods.",
+        faster: "Optimize this recipe for speed — minimize prep and cook time, suggest shortcuts, aim for under 20 minutes total.",
+        "less-ingredients": "Simplify this recipe to use the fewest ingredients possible while keeping it delicious.",
+      }
+      const modifierInstructions = modifier ? (modifierMap[modifier] ?? "") : ""
 
       const recipePrompt = `You are a professional chef. Using these ingredients: ${identifiedIngredients}
       
