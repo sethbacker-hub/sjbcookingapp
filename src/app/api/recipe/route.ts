@@ -3,6 +3,10 @@ import { createOpenAI } from "@ai-sdk/openai"
 import { generateText } from "ai"
 import { v4 as uuidv4 } from "uuid"
 
+export const runtime = "nodejs"
+export const dynamic = "force-dynamic"
+export const maxDuration = 60
+
 // Vercel AI Gateway — compatibility:'compatible' skips OpenAI key validation
 // so the gateway token is accepted as-is.
 const gateway = createOpenAI({

@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from "next/server"
 import { createOpenAI } from "@ai-sdk/openai"
 import { generateText } from "ai"
 
+export const runtime = "nodejs"
+export const dynamic = "force-dynamic"
+export const maxDuration = 60
+
 // Vercel AI Gateway — compatibility:'compatible' skips OpenAI key validation.
 const gateway = createOpenAI({
   baseURL: `${process.env.VERCEL_AI_GATEWAY_URL || "https://ai-gateway.vercel.com"}/v1`,
