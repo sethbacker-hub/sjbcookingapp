@@ -5,7 +5,7 @@ import { Progress } from "@/components/ui/progress"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
-import { Heart, Check, Salad, Zap, Minus } from "lucide-react"
+import { Heart, Check, Salad, Zap, Minus, Clock } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 interface RecipeCardProps {
@@ -41,9 +41,16 @@ export default function RecipeCard({ recipe, onModify, onSave, isSaved, isLoadin
         <div className="flex items-start justify-between gap-3">
           <div>
             <h2 className="text-2xl font-bold text-gray-900 leading-tight">{recipe.name}</h2>
-            <Badge variant="secondary" className="mt-2 text-sm">
-              {emoji} {recipe.cuisine}
-            </Badge>
+            <div className="mt-2 flex flex-wrap items-center gap-2">
+              <Badge variant="secondary" className="text-sm">
+                {emoji} {recipe.cuisine}
+              </Badge>
+              {typeof recipe.prepTimeMinutes === "number" && (
+                <Badge variant="secondary" className="gap-1 text-sm">
+                  <Clock className="h-3.5 w-3.5" /> {recipe.prepTimeMinutes} min
+                </Badge>
+              )}
+            </div>
           </div>
           <Button
             onClick={onSave}

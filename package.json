@@ -9,22 +9,24 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "next": "14.2.5",
-    "react": "^18",
-    "react-dom": "^18",
-    "ai": "5.0.209",
     "@ai-sdk/openai": "2.0.110",
     "@ai-sdk/vercel": "1.0.43",
     "@radix-ui/react-dialog": "^1.1.1",
     "@radix-ui/react-progress": "^1.1.0",
     "@radix-ui/react-scroll-area": "^1.1.0",
-    "@radix-ui/react-slot": "^1.1.0",
     "@radix-ui/react-separator": "^1.1.0",
+    "@radix-ui/react-slot": "^1.1.0",
+    "@vercel/sandbox": "^2.2.1",
+    "ai": "5.0.209",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "lucide-react": "^0.400.0",
+    "next": "14.2.5",
+    "react": "^18",
+    "react-dom": "^18",
     "tailwind-merge": "^2.4.0",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "workflow": "^4.5.0"
   },
   "engines": {
     "node": ">=20.0.0"

@@ -14,6 +14,8 @@ export interface Recipe {
   healthScore: number
   healthSummary: string
   cuisine: string
+  /** Total estimated prep + cook time (minutes), computed in a Vercel Sandbox. */
+  prepTimeMinutes?: number
   savedAt?: string
 }
 
