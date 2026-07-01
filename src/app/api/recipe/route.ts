@@ -1,12 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-import { generateText } from "ai"
-import { createOpenAI } from "@ai-sdk/openai"
-
-const gateway = createOpenAI({
-  baseURL: "https://ai-gateway.vercel.com/v1/sethbacker-1015s-projects/sjbcookingapp",
-  apiKey: process.env.AI_GATEWAY_API_KEY,
-  compatibility: "compatible",
-})
+import { generateText, gateway } from "ai"
 
 export const runtime = "nodejs"
 export const dynamic = "force-dynamic"
@@ -16,12 +9,19 @@ export async function GET() {
   return NextResponse.json({
     ok: true,
     route: "/api/recipe",
-    model: "gpt-4o-mini",
-    hasApiKey: !!process.env.OPENAI_API_KEY,
+    model: "openai/gpt-4o-mini",
+    hasApiKey: !!process.env.AI_GATEWAY_API_KEY,
   })
 }
 
 export async function POST(request: NextRequest) {
+  if (!process.env.AI_GATEWAY_API_KEY) {
+    return NextResponse.json(
+      { error: "AI_GATEWAY_API_KEY is not set. Add it in your Vercel project environment variables." },
+      { status: 500 }
+    )
+  }
+
   let body: Record<string, unknown>
   try {
     body = await request.json()
@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
   let rawText: string
   try {
     const result = await generateText({
-      model: gateway("gpt-4o-mini"),
+      model: gateway("openai/gpt-4o-mini"),
       system: systemPrompt,
       messages: [{ role: "user", content: userContent }],
       maxOutputTokens: 2048,
