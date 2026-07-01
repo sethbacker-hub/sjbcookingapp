@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
-import { streamText, createProviderRegistry } from "ai"
-import { createOpenAI } from "@ai-sdk/openai"
+import { generateText } from "ai"
+import { openai } from "@ai-sdk/openai"
 
 export const runtime = "nodejs"
 export const dynamic = "force-dynamic"
@@ -10,20 +10,12 @@ export async function GET() {
   return NextResponse.json({
     ok: true,
     route: "/api/recipe",
-    model: "openai/gpt-4o-mini",
-    hasApiKey: !!process.env.AI_GATEWAY_API_KEY,
+    model: "gpt-4o-mini",
+    hasApiKey: !!process.env.OPENAI_API_KEY,
   })
 }
 
 export async function POST(request: NextRequest) {
-  const apiKey = process.env.AI_GATEWAY_API_KEY
-  if (!apiKey) {
-    return NextResponse.json(
-      { error: "AI_GATEWAY_API_KEY is not set. Add it in your Vercel project environment variables." },
-      { status: 500 }
-    )
-  }
-
   let body: Record<string, unknown>
   try {
     body = await request.json()
@@ -77,23 +69,19 @@ export async function POST(request: NextRequest) {
       ]
     : textPrompt
 
-  const registry = createProviderRegistry({
-    openai: createOpenAI({ apiKey }),
-  })
-
   let rawText: string
   try {
-    const result = streamText({
-      model: registry.languageModel("openai:gpt-4o-mini"),
+    const result = await generateText({
+      model: openai("gpt-4o-mini"),
       system: systemPrompt,
       messages: [{ role: "user", content: userContent }],
       maxOutputTokens: 2048,
       temperature: 0.7,
     })
-    rawText = await result.text
+    rawText = result.text
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err)
-    console.error("[recipe] streamText error:", msg)
+    console.error("[recipe] generateText error:", msg)
     return NextResponse.json({ error: `AI error: ${msg}` }, { status: 502 })
   }
 
