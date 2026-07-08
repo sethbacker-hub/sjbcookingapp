@@ -91,13 +91,20 @@ async function generateRecipeStep(input: RecipeInput): Promise<GeneratedRecipe> 
 
   type ContentPart =
     | { type: "text"; text: string }
-    | { type: "image"; image: string }
+    | { type: "image"; image: string; mimeType?: string }
 
-  const userContent: string | ContentPart[] = imageBase64
-    ? [
-        { type: "image", image: imageBase64 },
-        { type: "text", text: textPrompt },
-      ]
+  // imageBase64 arrives as a data URL: "data:image/jpeg;base64,<data>"
+  // The AI SDK ImagePart expects raw base64 + mimeType separately.
+  let imageContent: ContentPart | undefined
+  if (imageBase64) {
+    const match = imageBase64.match(/^data:([^;]+);base64,(.+)$/)
+    imageContent = match
+      ? { type: "image", image: match[2], mimeType: match[1] }
+      : { type: "image", image: imageBase64 }
+  }
+
+  const userContent: string | ContentPart[] = imageContent
+    ? [imageContent, { type: "text", text: textPrompt }]
     : textPrompt
 
   let rawText: string
