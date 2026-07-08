@@ -68,17 +68,51 @@ const CUISINE_OPTIONS = [
 function FridgeIcon() {
   return (
     <svg width="44" height="56" viewBox="0 0 44 56" fill="none" aria-hidden>
-      {/* Body */}
-      <rect x="5" y="2" width="34" height="52" rx="6" fill="#F0EDE8" stroke="#C9BEAF" strokeWidth="1.5"/>
-      {/* Freezer divider */}
+      <rect x="5" y="2" width="34" height="52" rx="7" fill="#F0EDE8" stroke="#C9BEAF" strokeWidth="1.5"/>
       <line x1="5" y1="20" x2="39" y2="20" stroke="#C9BEAF" strokeWidth="1.5"/>
-      {/* Freezer handle */}
       <rect x="28" y="10" width="8" height="2.5" rx="1.25" fill="#B5ADA3"/>
-      {/* Fridge handle */}
       <rect x="28" y="32" width="8" height="2.5" rx="1.25" fill="#B5ADA3"/>
-      {/* Upload arrow in accent */}
       <path d="M22 47 L22 39" stroke="#CC4E0D" strokeWidth="1.5" strokeLinecap="round"/>
       <path d="M18.5 42.5 L22 39 L25.5 42.5" stroke="#CC4E0D" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  )
+}
+
+/* Flat-illustration style food decorations for the hero gutters */
+function TomatoDecoration() {
+  return (
+    <svg viewBox="0 0 100 118" fill="none" aria-hidden>
+      {/* Calyx */}
+      <path d="M50 30 C50 22 50 14 52 8 C52 14 50 30 50 30Z" fill="#4E9040"/>
+      <path d="M50 30 C46 22 38 16 34 20 C38 22 48 28 50 30Z" fill="#5BA34A"/>
+      <path d="M50 30 C44 22 40 15 38 12 C40 17 48 27 50 30Z" fill="#4E9040"/>
+      <path d="M50 30 C54 22 62 16 66 20 C62 22 52 28 50 30Z" fill="#4E9040"/>
+      <path d="M50 30 C56 22 60 15 62 12 C60 17 52 27 50 30Z" fill="#5BA34A"/>
+      {/* Body */}
+      <circle cx="50" cy="72" r="38" fill="#E8503A"/>
+      {/* Depth - bottom shadow */}
+      <ellipse cx="62" cy="90" rx="22" ry="14" fill="rgba(0,0,0,0.07)"/>
+      {/* Highlight */}
+      <ellipse cx="34" cy="54" rx="10" ry="8" fill="rgba(255,255,255,0.28)" transform="rotate(-22 34 54)"/>
+      <ellipse cx="28" cy="60" rx="4" ry="3" fill="rgba(255,255,255,0.16)"/>
+    </svg>
+  )
+}
+
+function PepperDecoration() {
+  return (
+    <svg viewBox="0 0 64 110" fill="none" aria-hidden>
+      {/* Stem */}
+      <path d="M34 10 C34 6 36 2 40 2 C37 5 34 10 34 10Z" fill="#4E9040"/>
+      <path d="M34 10 C30 5 26 4 24 6" stroke="#5BA34A" strokeWidth="2.5" strokeLinecap="round"/>
+      {/* Body */}
+      <path d="M34 12 C42 14 48 26 48 44 C48 64 40 82 32 92 C26 100 18 98 16 92 C14 86 16 76 22 66 C28 56 28 40 28 26 C28 18 30 12 34 12Z" fill="#E06B20"/>
+      {/* Tip curve */}
+      <path d="M32 92 C28 100 22 106 22 106 C25 102 28 97 32 92Z" fill="#C85210"/>
+      {/* Shadow side */}
+      <path d="M34 12 C40 14 46 26 46 44 C46 64 38 82 32 92 C36 82 44 64 44 44 C44 26 38 14 34 12Z" fill="rgba(0,0,0,0.08)"/>
+      {/* Highlight */}
+      <ellipse cx="28" cy="36" rx="5" ry="11" fill="rgba(255,255,255,0.22)" transform="rotate(-6 28 36)"/>
     </svg>
   )
 }
@@ -198,7 +232,7 @@ export default function CookingApp() {
         <div className="mx-auto flex max-w-2xl items-center justify-between px-4 py-3">
           <div className="flex items-center gap-2">
             <ChefHat className="h-4 w-4" style={{ color: "var(--accent)" }} />
-            <span className="font-display text-[15px] font-700 tracking-tight text-[#1C1917]" style={{ fontWeight: 700 }}>Big Tex</span>
+            <span className="font-display text-[15px] tracking-tight text-[#1C1917]" style={{ fontWeight: 700 }}>Big Tex</span>
           </div>
           <Button
             variant="outline"
@@ -218,53 +252,56 @@ export default function CookingApp() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-2xl px-4 pb-12 space-y-5">
-        {/* Hero */}
-        <div className="relative pt-10 pb-8 text-center overflow-hidden select-none">
-          {/* Warm radial glow */}
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-x-0 top-0 h-56"
-            style={{ background: "radial-gradient(ellipse 90% 65% at 50% 0%, rgba(204,78,13,0.09) 0%, transparent 70%)" }}
-          />
-          {/* Scattered food decorations */}
-          <span aria-hidden className="pointer-events-none absolute top-6  left-[8%]  text-[1.6rem] opacity-20 -rotate-12 hidden sm:block">🧄</span>
-          <span aria-hidden className="pointer-events-none absolute top-4  right-[9%] text-[1.4rem] opacity-20  rotate-8  hidden sm:block">🌿</span>
-          <span aria-hidden className="pointer-events-none absolute bottom-4 left-[6%]  text-[1.5rem] opacity-15  rotate-6  hidden sm:block">🍳</span>
-          <span aria-hidden className="pointer-events-none absolute bottom-6 right-[7%] text-[1.6rem] opacity-20 -rotate-8  hidden sm:block">🫙</span>
-          <span aria-hidden className="pointer-events-none absolute top-10 left-[22%] text-[1.1rem] opacity-15 -rotate-6 hidden sm:block">🫑</span>
-          <span aria-hidden className="pointer-events-none absolute top-8  right-[21%] text-[1.1rem] opacity-15  rotate-10 hidden sm:block">🧅</span>
-          {/* Content */}
-          <p className="relative text-xs font-semibold uppercase tracking-[0.14em] mb-3" style={{ color: "var(--accent)" }}>
+      {/* Hero — full-width so illustrations live in the page gutters, never over text */}
+      <section
+        className="relative overflow-hidden"
+        style={{ background: "linear-gradient(165deg, #FDEEDD 0%, #FEF3E6 30%, #FDF8F2 60%, #F7F6F4 100%)" }}
+      >
+        {/* Tomato illustration — left gutter, only at lg+ where gutters are ≥176px */}
+        <div aria-hidden className="pointer-events-none absolute left-0 bottom-0 w-36 opacity-70 hidden lg:block">
+          <TomatoDecoration />
+        </div>
+        {/* Pepper illustration — right gutter */}
+        <div aria-hidden className="pointer-events-none absolute right-0 top-6 w-24 opacity-65 hidden lg:block" style={{ transform: "rotate(10deg)" }}>
+          <PepperDecoration />
+        </div>
+        {/* Text — constrained, z-10 so it's always above */}
+        <div className="relative z-10 mx-auto max-w-2xl px-4 py-10 text-center select-none">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] mb-3" style={{ color: "var(--accent)" }}>
             AI Recipe Generator
           </p>
-          <h1 className="relative font-display text-[2.6rem] sm:text-[3.2rem] font-extrabold leading-[1.08] tracking-tight text-[#1C1917]" style={{ textWrap: "balance" } as React.CSSProperties}>
+          <h1
+            className="font-display text-[2.6rem] sm:text-[3.2rem] font-extrabold leading-[1.08] tracking-tight text-[#1C1917]"
+            style={{ textWrap: "balance" } as React.CSSProperties}
+          >
             Big Tex Cooking Engine
           </h1>
-          <p className="relative mt-3 text-[#78716C] text-base leading-relaxed">
+          <p className="mt-3 text-[#78716C] text-base leading-relaxed">
             Drop in what&apos;s in your kitchen — we&apos;ll turn it into something worth eating.
           </p>
         </div>
+      </section>
 
+      <main className="mx-auto max-w-2xl px-4 pb-12 space-y-5 mt-5">
         {/* Input card */}
-        <Card className="recipe-input-card p-6 space-y-5 border border-[#E7E4DF] bg-white rounded-2xl shadow-[0_1px_4px_rgba(28,25,23,0.06),0_4px_16px_rgba(28,25,23,0.04)]">
+        <Card className="recipe-input-card p-6 space-y-5 border border-[#E7E4DF] bg-white rounded-3xl">
           {/* Image upload */}
           <div>
             <label className="block text-sm font-semibold text-[#1C1917] mb-2">
               Upload a photo <span className="font-normal text-[#A8A29E]">(optional)</span>
             </label>
             {isConverting ? (
-              <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-[#E7E4DF] bg-[#F7F6F4] p-6">
+              <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-[#E8DACE] bg-[#FEF8F3] p-6">
                 <Loader2 className="h-7 w-7 animate-spin mb-2" style={{ color: "var(--accent)" }} />
                 <p className="text-sm text-[#78716C]">Converting image…</p>
               </div>
             ) : imagePreview ? (
-              <div className="relative rounded-lg overflow-hidden border bg-gray-50">
+              <div className="relative rounded-2xl overflow-hidden border border-[#E8DACE] bg-[#FEF8F3]">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={imagePreview} alt="Fridge preview" className="w-full max-h-52 object-cover" />
                 {/* Scanning overlay while loading */}
                 {isLoading && (
-                  <div className="scan-overlay absolute inset-0 bg-[#1C1917]/30 pointer-events-none rounded-xl">
+                  <div className="scan-overlay absolute inset-0 bg-[#1C1917]/30 pointer-events-none rounded-2xl">
                     <div className="scan-line absolute left-0 right-0 h-[1.5px] bg-gradient-to-r from-transparent via-white/80 to-transparent" />
                     <div className="absolute inset-0 flex flex-col items-center justify-center">
                       <span className="text-[11px] font-semibold text-white/80 tracking-[0.14em] uppercase">Scanning…</span>
@@ -283,10 +320,10 @@ export default function CookingApp() {
             ) : (
               <div
                 className={cn(
-                  "flex flex-col items-center justify-center rounded-xl border-2 border-dashed p-6 cursor-pointer transition-colors duration-200",
+                  "flex flex-col items-center justify-center rounded-2xl border-2 border-dashed p-6 cursor-pointer transition-colors duration-200",
                   isDragging
                     ? "dropzone--dragging"
-                    : "border-[#E7E4DF] bg-[#FDFCFB] hover:border-[#C9BEAF] hover:bg-[#FAF8F5]"
+                    : "border-[#E8DACE] bg-[#FEF8F3] hover:border-[#D4956A] hover:bg-[#FDF3EA]"
                 )}
                 onDragOver={(e) => { e.preventDefault(); setIsDragging(true) }}
                 onDragLeave={() => setIsDragging(false)}
@@ -325,7 +362,7 @@ export default function CookingApp() {
               onChange={(e) => setIngredients(e.target.value)}
               placeholder="e.g. chicken thighs, garlic, lemon, cherry tomatoes, spinach..."
               rows={3}
-              className="ingredient-textarea w-full rounded-xl border border-[#E7E4DF] bg-[#FAFAF8] px-3 py-2.5 text-sm text-[#1C1917] placeholder:text-[#C4B8AF] resize-none"
+              className="ingredient-textarea w-full rounded-2xl border border-[#E8DACE] bg-[#FEF8F3] px-4 py-3 text-sm text-[#1C1917] placeholder:text-[#C4B8AF] resize-none"
             />
           </div>
 
@@ -341,7 +378,7 @@ export default function CookingApp() {
                     onClick={() => setCuisine(opt.value)}
                     style={isSelected ? undefined : { "--hover-tint": opt.tint } as React.CSSProperties}
                     className={cn(
-                      "cuisine-btn flex flex-col items-center justify-center gap-0.5 rounded-xl border py-2 px-3",
+                      "cuisine-btn flex flex-col items-center justify-center gap-0.5 rounded-2xl border py-2 px-3",
                       isSelected
                         ? "cuisine-btn--selected"
                         : "border-[#E7E4DF] bg-white text-[#57534E] hover:border-[#C9BEAF]"
@@ -380,7 +417,7 @@ export default function CookingApp() {
 
         {/* Loading state */}
         {isLoading && (
-          <div className="flex items-center gap-3 rounded-xl border border-[#E7E4DF] bg-white px-4 py-3.5 shadow-[0_1px_4px_rgba(28,25,23,0.05)]">
+          <div className="flex items-center gap-3 rounded-2xl border border-[#E7E4DF] bg-white px-4 py-3.5 shadow-[0_1px_4px_rgba(28,25,23,0.05)]">
             <Loader2 className="h-4 w-4 animate-spin shrink-0" style={{ color: "var(--accent)" }} />
             <p className="text-sm text-[#57534E]">Working on your recipe — usually takes 10–20 seconds.</p>
           </div>
@@ -388,7 +425,7 @@ export default function CookingApp() {
 
         {/* Error state */}
         {error && (
-          <div className="flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 p-4">
+          <div className="flex items-start gap-3 rounded-2xl border border-red-200 bg-red-50 p-4">
             <AlertCircle className="h-5 w-5 text-red-500 shrink-0 mt-0.5" />
             <div>
               <p className="text-sm font-semibold text-red-700">Something went wrong</p>
