@@ -24,7 +24,7 @@ export interface WorkflowStep {
   message: string
 }
 
-export type CuisineType = 'italian' | 'japanese' | 'mexican' | 'surprise'
+export type CuisineType = 'italian' | 'japanese' | 'mexican' | 'american' | 'thai' | 'indian' | 'french' | 'mediterranean' | 'korean' | 'chinese' | 'surprise'
 
 export interface CuisineOption {
   value: CuisineType

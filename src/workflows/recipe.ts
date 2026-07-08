@@ -69,6 +69,13 @@ async function generateRecipeStep(input: RecipeInput): Promise<GeneratedRecipe> 
     italian: "Italian",
     japanese: "Japanese",
     mexican: "Mexican",
+    american: "American",
+    thai: "Thai",
+    indian: "Indian",
+    french: "French",
+    mediterranean: "Mediterranean",
+    korean: "Korean",
+    chinese: "Chinese",
     surprise: "any creative international",
   }
   const cuisineLabel = cuisineMap[cuisine ?? ""] || "any"

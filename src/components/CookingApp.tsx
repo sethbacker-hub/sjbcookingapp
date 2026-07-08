@@ -55,6 +55,13 @@ const CUISINE_OPTIONS = [
   { value: "italian" as CuisineType, label: "Italian", emoji: "🇮🇹" },
   { value: "japanese" as CuisineType, label: "Japanese", emoji: "🇯🇵" },
   { value: "mexican" as CuisineType, label: "Mexican", emoji: "🇲🇽" },
+  { value: "american" as CuisineType, label: "American", emoji: "🇺🇸" },
+  { value: "thai" as CuisineType, label: "Thai", emoji: "🇹🇭" },
+  { value: "indian" as CuisineType, label: "Indian", emoji: "🇮🇳" },
+  { value: "french" as CuisineType, label: "French", emoji: "🇫🇷" },
+  { value: "mediterranean" as CuisineType, label: "Mediterranean", emoji: "🫒" },
+  { value: "korean" as CuisineType, label: "Korean", emoji: "🇰🇷" },
+  { value: "chinese" as CuisineType, label: "Chinese", emoji: "🇨🇳" },
   { value: "surprise" as CuisineType, label: "Surprise me", emoji: "🌍" },
 ]
 
@@ -270,20 +277,20 @@ export default function CookingApp() {
           {/* Cuisine selector */}
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-2">Choose a cuisine vibe</label>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            <div className="flex flex-wrap gap-2">
               {CUISINE_OPTIONS.map((opt) => (
                 <button
                   key={opt.value}
                   onClick={() => setCuisine(opt.value)}
                   className={cn(
-                    "flex flex-col items-center justify-center gap-1 rounded-xl border-2 py-3 px-2 text-sm font-medium transition-all",
+                    "flex flex-col items-center justify-center gap-1 rounded-xl border-2 py-2.5 px-3 font-medium transition-all",
                     cuisine === opt.value
                       ? "border-orange-400 bg-orange-50 text-orange-700 shadow-sm"
                       : "border-gray-100 bg-white text-gray-600 hover:border-orange-200 hover:bg-orange-50/50"
                   )}
                 >
-                  <span className="text-2xl">{opt.emoji}</span>
-                  <span className="text-xs">{opt.label}</span>
+                  <span className="text-xl">{opt.emoji}</span>
+                  <span className="text-xs whitespace-nowrap">{opt.label}</span>
                 </button>
               ))}
             </div>
