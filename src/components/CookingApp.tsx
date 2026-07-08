@@ -6,7 +6,7 @@ import { Card } from "@/components/ui/card"
 import RecipeCard from "@/components/RecipeCard"
 import SavedRecipesDrawer from "@/components/SavedRecipesDrawer"
 import { Recipe, CuisineType, ModifierType } from "@/types/recipe"
-import { ChefHat, Upload, X, BookOpen, Loader2, AlertCircle } from "lucide-react"
+import { ChefHat, X, BookOpen, Loader2, AlertCircle } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 /** Convert any image file (including HEIC and PDF) to a JPEG data URL. */
@@ -52,18 +52,36 @@ function blobToDataUrl(blob: Blob): Promise<string> {
 }
 
 const CUISINE_OPTIONS = [
-  { value: "italian" as CuisineType, label: "Italian", emoji: "🇮🇹" },
-  { value: "japanese" as CuisineType, label: "Japanese", emoji: "🇯🇵" },
-  { value: "mexican" as CuisineType, label: "Mexican", emoji: "🇲🇽" },
-  { value: "american" as CuisineType, label: "American", emoji: "🇺🇸" },
-  { value: "thai" as CuisineType, label: "Thai", emoji: "🇹🇭" },
-  { value: "indian" as CuisineType, label: "Indian", emoji: "🇮🇳" },
-  { value: "french" as CuisineType, label: "French", emoji: "🇫🇷" },
-  { value: "mediterranean" as CuisineType, label: "Mediterranean", emoji: "🫒" },
-  { value: "korean" as CuisineType, label: "Korean", emoji: "🇰🇷" },
-  { value: "chinese" as CuisineType, label: "Chinese", emoji: "🇨🇳" },
-  { value: "surprise" as CuisineType, label: "Surprise me", emoji: "🌍" },
+  { value: "italian"       as CuisineType, label: "Italian",       emoji: "🇮🇹", tint: "#FFF1EF" },
+  { value: "japanese"      as CuisineType, label: "Japanese",      emoji: "🇯🇵", tint: "#FFF0F6" },
+  { value: "mexican"       as CuisineType, label: "Mexican",       emoji: "🇲🇽", tint: "#F0FFF4" },
+  { value: "american"      as CuisineType, label: "American",      emoji: "🇺🇸", tint: "#F0F5FF" },
+  { value: "thai"          as CuisineType, label: "Thai",          emoji: "🇹🇭", tint: "#FFFBEB" },
+  { value: "indian"        as CuisineType, label: "Indian",        emoji: "🇮🇳", tint: "#FFF7ED" },
+  { value: "french"        as CuisineType, label: "French",        emoji: "🇫🇷", tint: "#F8F0FF" },
+  { value: "mediterranean" as CuisineType, label: "Mediterranean", emoji: "🫒", tint: "#F0FAFF" },
+  { value: "korean"        as CuisineType, label: "Korean",        emoji: "🇰🇷", tint: "#FFF0F0" },
+  { value: "chinese"       as CuisineType, label: "Chinese",       emoji: "🇨🇳", tint: "#FFF8F0" },
+  { value: "surprise"      as CuisineType, label: "Surprise me",   emoji: "🌍", tint: "#F5FFEB" },
 ]
+
+function FridgeIcon() {
+  return (
+    <svg width="44" height="56" viewBox="0 0 44 56" fill="none" aria-hidden>
+      {/* Body */}
+      <rect x="5" y="2" width="34" height="52" rx="6" fill="#F0EDE8" stroke="#C9BEAF" strokeWidth="1.5"/>
+      {/* Freezer divider */}
+      <line x1="5" y1="20" x2="39" y2="20" stroke="#C9BEAF" strokeWidth="1.5"/>
+      {/* Freezer handle */}
+      <rect x="28" y="10" width="8" height="2.5" rx="1.25" fill="#B5ADA3"/>
+      {/* Fridge handle */}
+      <rect x="28" y="32" width="8" height="2.5" rx="1.25" fill="#B5ADA3"/>
+      {/* Upload arrow in accent */}
+      <path d="M22 47 L22 39" stroke="#CC4E0D" strokeWidth="1.5" strokeLinecap="round"/>
+      <path d="M18.5 42.5 L22 39 L25.5 42.5" stroke="#CC4E0D" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  )
+}
 
 const SAVED_KEY = "sjb-saved-recipes"
 
@@ -202,22 +220,28 @@ export default function CookingApp() {
 
       <main className="mx-auto max-w-2xl px-4 pb-12 space-y-5">
         {/* Hero */}
-        <div className="relative pt-10 pb-8 text-center overflow-hidden">
-          {/* Soft radial glow behind headline */}
+        <div className="relative pt-10 pb-8 text-center overflow-hidden select-none">
+          {/* Warm radial glow */}
           <div
             aria-hidden
-            className="pointer-events-none absolute inset-x-0 top-0 h-52"
-            style={{
-              background: "radial-gradient(ellipse 80% 60% at 50% 0%, rgb(204 78 13 / 0.08) 0%, transparent 70%)",
-            }}
+            className="pointer-events-none absolute inset-x-0 top-0 h-56"
+            style={{ background: "radial-gradient(ellipse 90% 65% at 50% 0%, rgba(204,78,13,0.09) 0%, transparent 70%)" }}
           />
-          <p className="text-xs font-semibold uppercase tracking-[0.12em] mb-3" style={{ color: "var(--accent)" }}>
+          {/* Scattered food decorations */}
+          <span aria-hidden className="pointer-events-none absolute top-6  left-[8%]  text-[1.6rem] opacity-20 -rotate-12 hidden sm:block">🧄</span>
+          <span aria-hidden className="pointer-events-none absolute top-4  right-[9%] text-[1.4rem] opacity-20  rotate-8  hidden sm:block">🌿</span>
+          <span aria-hidden className="pointer-events-none absolute bottom-4 left-[6%]  text-[1.5rem] opacity-15  rotate-6  hidden sm:block">🍳</span>
+          <span aria-hidden className="pointer-events-none absolute bottom-6 right-[7%] text-[1.6rem] opacity-20 -rotate-8  hidden sm:block">🫙</span>
+          <span aria-hidden className="pointer-events-none absolute top-10 left-[22%] text-[1.1rem] opacity-15 -rotate-6 hidden sm:block">🫑</span>
+          <span aria-hidden className="pointer-events-none absolute top-8  right-[21%] text-[1.1rem] opacity-15  rotate-10 hidden sm:block">🧅</span>
+          {/* Content */}
+          <p className="relative text-xs font-semibold uppercase tracking-[0.14em] mb-3" style={{ color: "var(--accent)" }}>
             AI Recipe Generator
           </p>
-          <h1 className="font-display text-[2.6rem] sm:text-[3.2rem] font-extrabold leading-[1.08] tracking-tight text-[#1C1917]" style={{ textWrap: "balance" } as React.CSSProperties}>
+          <h1 className="relative font-display text-[2.6rem] sm:text-[3.2rem] font-extrabold leading-[1.08] tracking-tight text-[#1C1917]" style={{ textWrap: "balance" } as React.CSSProperties}>
             Big Tex Cooking Engine
           </h1>
-          <p className="mt-3 text-[#78716C] text-base leading-relaxed">
+          <p className="relative mt-3 text-[#78716C] text-base leading-relaxed">
             Drop in what&apos;s in your kitchen — we&apos;ll turn it into something worth eating.
           </p>
         </div>
@@ -259,25 +283,27 @@ export default function CookingApp() {
             ) : (
               <div
                 className={cn(
-                  "flex flex-col items-center justify-center rounded-xl border-2 border-dashed p-6 cursor-pointer transition-colors duration-150",
+                  "flex flex-col items-center justify-center rounded-xl border-2 border-dashed p-6 cursor-pointer transition-colors duration-200",
                   isDragging
                     ? "dropzone--dragging"
-                    : "border-[#E7E4DF] hover:border-[#C9BEAF] hover:bg-[#F7F6F4]"
+                    : "border-[#E7E4DF] bg-[#FDFCFB] hover:border-[#C9BEAF] hover:bg-[#FAF8F5]"
                 )}
                 onDragOver={(e) => { e.preventDefault(); setIsDragging(true) }}
                 onDragLeave={() => setIsDragging(false)}
                 onDrop={handleDrop}
                 onClick={() => fileInputRef.current?.click()}
               >
-                <Upload className={cn("h-6 w-6 mb-2 transition-colors duration-150", isDragging ? "text-[#CC4E0D]" : "text-[#C9BEAF]")} />
-                {isDragging ? (
-                  <p className="text-sm font-medium" style={{ color: "var(--accent)" }}>Release to upload</p>
-                ) : (
-                  <>
-                    <p className="text-sm text-[#78716C]">Drop a fridge photo here or <span className="font-medium text-[#1C1917]">browse</span></p>
-                    <p className="text-xs text-[#A8A29E] mt-1">PNG, JPG, HEIC, WebP, PDF — up to 10 MB</p>
-                  </>
-                )}
+                <FridgeIcon />
+                <div className="mt-3 text-center">
+                  {isDragging ? (
+                    <p className="text-sm font-semibold" style={{ color: "var(--accent)" }}>Release to upload</p>
+                  ) : (
+                    <>
+                      <p className="text-sm text-[#78716C]">Drop a fridge photo here or <span className="font-semibold text-[#1C1917] underline underline-offset-2 decoration-[#C9BEAF]">browse</span></p>
+                      <p className="text-xs text-[#A8A29E] mt-1">PNG, JPG, HEIC, WebP, PDF — up to 10 MB</p>
+                    </>
+                  )}
+                </div>
               </div>
             )}
             <input
@@ -307,21 +333,27 @@ export default function CookingApp() {
           <div>
             <label className="block text-sm font-semibold text-[#1C1917] mb-2">Cuisine</label>
             <div className="flex flex-wrap gap-2">
-              {CUISINE_OPTIONS.map((opt) => (
-                <button
-                  key={opt.value}
-                  onClick={() => setCuisine(opt.value)}
-                  className={cn(
-                    "cuisine-btn flex flex-col items-center justify-center gap-0.5 rounded-xl border py-2 px-3",
-                    cuisine === opt.value
-                      ? "cuisine-btn--selected"
-                      : "border-[#E7E4DF] bg-white text-[#57534E] hover:bg-[#F7F6F4]"
-                  )}
-                >
-                  <span className="text-[17px] leading-none">{opt.emoji}</span>
-                  <span className="text-[11px] font-medium whitespace-nowrap mt-0.5">{opt.label}</span>
-                </button>
-              ))}
+              {CUISINE_OPTIONS.map((opt) => {
+                const isSelected = cuisine === opt.value
+                return (
+                  <button
+                    key={opt.value}
+                    onClick={() => setCuisine(opt.value)}
+                    style={isSelected ? undefined : { "--hover-tint": opt.tint } as React.CSSProperties}
+                    className={cn(
+                      "cuisine-btn flex flex-col items-center justify-center gap-0.5 rounded-xl border py-2 px-3",
+                      isSelected
+                        ? "cuisine-btn--selected"
+                        : "border-[#E7E4DF] bg-white text-[#57534E] hover:border-[#C9BEAF]"
+                    )}
+                    onMouseEnter={(e) => { if (!isSelected) e.currentTarget.style.backgroundColor = opt.tint }}
+                    onMouseLeave={(e) => { if (!isSelected) e.currentTarget.style.backgroundColor = "" }}
+                  >
+                    <span className="text-[17px] leading-none">{opt.emoji}</span>
+                    <span className="text-[11px] font-medium whitespace-nowrap mt-0.5">{opt.label}</span>
+                  </button>
+                )
+              })}
             </div>
           </div>
 

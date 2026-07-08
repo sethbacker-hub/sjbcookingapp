@@ -6,7 +6,6 @@
   --accent:       #CC4E0D;
   --accent-hover: #B34309;
   --accent-light: #FEF0EA;
-  --accent-mid:   #F97316;  /* for shadows only */
 }
 
 @layer base {
@@ -35,59 +34,73 @@
 }
 
 @layer base {
-  * {
-    @apply border-border;
-  }
+  * { @apply border-border; }
   body {
     @apply bg-background text-foreground;
     background-color: #F7F6F4;
   }
 }
 
-/* ── Display font utility ── */
 .font-display {
   font-family: var(--font-jakarta), 'Inter', sans-serif;
 }
 
+/* ── Main card ── */
+.recipe-input-card {
+  box-shadow:
+    0 2px 8px rgba(28, 25, 23, 0.07),
+    0 8px 28px rgba(28, 25, 23, 0.05);
+}
+
 /* ── Cuisine buttons ── */
 .cuisine-btn {
-  transition: transform 140ms ease, box-shadow 140ms ease,
-              border-color 140ms ease, background-color 140ms ease,
-              color 140ms ease;
+  box-shadow: 0 1px 3px rgba(28, 25, 23, 0.07);
+  transition:
+    transform 140ms ease,
+    box-shadow 140ms ease,
+    border-color 140ms ease,
+    background-color 140ms ease,
+    color 140ms ease;
   will-change: transform;
 }
 .cuisine-btn:hover:not(.cuisine-btn--selected) {
   transform: translateY(-1px);
-  border-color: #D1C9BF;
+  box-shadow: 0 4px 12px rgba(28, 25, 23, 0.11);
 }
 .cuisine-btn:active {
-  transform: scale(0.97);
+  transform: scale(0.92);
+  transition-duration: 80ms;
 }
 .cuisine-btn--selected {
+  transform: scale(1.04);
   border-color: var(--accent) !important;
   background-color: var(--accent-light) !important;
   color: var(--accent) !important;
-  transform: scale(1.02);
-  box-shadow: 0 0 0 1px var(--accent);
+  box-shadow:
+    0 0 0 1.5px var(--accent),
+    0 4px 12px rgba(204, 78, 13, 0.14);
 }
 
 /* ── Submit / CTA button ── */
 .recipe-submit-btn {
   background-color: var(--accent) !important;
-  transition: transform 130ms ease, box-shadow 130ms ease, background-color 140ms ease;
+  box-shadow: 0 2px 6px rgba(204, 78, 13, 0.30), 0 1px 2px rgba(28, 25, 23, 0.10);
+  transition: transform 120ms ease, box-shadow 120ms ease, background-color 130ms ease;
   will-change: transform;
 }
 .recipe-submit-btn:hover:not(:disabled) {
   background-color: var(--accent-hover) !important;
-  transform: translateY(-1px);
-  box-shadow: 0 6px 20px -6px rgb(204 78 13 / 0.45);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(204, 78, 13, 0.38), 0 2px 6px rgba(28, 25, 23, 0.10);
 }
 .recipe-submit-btn:active:not(:disabled) {
-  transform: translateY(0) scale(0.985);
-  box-shadow: 0 2px 6px -2px rgb(204 78 13 / 0.3);
+  transform: translateY(1px) scale(0.988);
+  box-shadow: 0 1px 3px rgba(204, 78, 13, 0.22);
+  transition-duration: 70ms;
 }
 .recipe-submit-btn:disabled {
   background-color: #C4B8AF !important;
+  box-shadow: none;
 }
 
 /* ── Input focus ── */
@@ -97,13 +110,18 @@
 .ingredient-textarea:focus {
   outline: none;
   border-color: #C9BEAF;
-  box-shadow: 0 0 0 3px rgb(204 78 13 / 0.10);
+  box-shadow: 0 0 0 3px rgba(204, 78, 13, 0.10);
 }
 
 /* ── Drop zone ── */
+@keyframes dropzone-glow {
+  0%, 100% { box-shadow: 0 0 0 2px var(--accent), 0 0 14px rgba(204, 78, 13, 0.15); }
+  50%       { box-shadow: 0 0 0 2px var(--accent), 0 0 24px rgba(204, 78, 13, 0.28); }
+}
 .dropzone--dragging {
   border-color: var(--accent) !important;
   background-color: var(--accent-light) !important;
+  animation: dropzone-glow 1.4s ease-in-out infinite;
 }
 
 /* ── Image scan overlay ── */
@@ -116,9 +134,7 @@
 .scan-line {
   animation: scan-line 2.4s ease-in-out infinite;
 }
-.scan-overlay {
-  opacity: 0.35;
-}
+.scan-overlay { opacity: 0.35; }
 
 /* ── Ingredient tag stagger-in ── */
 @keyframes tag-in {
@@ -132,7 +148,7 @@
 
 /* ── Loading dots ── */
 @keyframes dot-bounce {
-  0%, 80%, 100% { transform: translateY(0);   opacity: 0.4; }
+  0%, 80%, 100% { transform: translateY(0);   opacity: 0.5; }
   40%           { transform: translateY(-4px); opacity: 1;   }
 }
 .loading-dot {
@@ -140,8 +156,3 @@
 }
 .loading-dot:nth-child(2) { animation-delay: 0.15s; }
 .loading-dot:nth-child(3) { animation-delay: 0.30s; }
-
-/* ── Card hover ── */
-.recipe-input-card {
-  transition: box-shadow 200ms ease;
-}
