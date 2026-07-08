@@ -232,7 +232,7 @@ export default function CookingApp() {
         <div className="mx-auto flex max-w-2xl items-center justify-between px-4 py-3">
           <div className="flex items-center gap-2">
             <ChefHat className="h-4 w-4" style={{ color: "var(--accent)" }} />
-            <span className="font-display text-[15px] tracking-tight text-[#1C1917]" style={{ fontWeight: 700 }}>Big Tex</span>
+            <span className="font-display text-[15px] tracking-tight text-[#1C1917]" style={{ fontWeight: 700 }}>Seth&apos;s Cooking Assistant</span>
           </div>
           <Button
             variant="outline"
@@ -274,10 +274,10 @@ export default function CookingApp() {
             className="font-display text-[2.6rem] sm:text-[3.2rem] font-extrabold leading-[1.08] tracking-tight text-[#1C1917]"
             style={{ textWrap: "balance" } as React.CSSProperties}
           >
-            Big Tex Cooking Engine
+            Seth&apos;s Cooking Assistant
           </h1>
           <p className="mt-3 text-[#78716C] text-base leading-relaxed">
-            Drop in what&apos;s in your kitchen — we&apos;ll turn it into something worth eating.
+            Drop in what&apos;s in your kitchen — I&apos;ll turn it into something worth eating.
           </p>
         </div>
       </section>
