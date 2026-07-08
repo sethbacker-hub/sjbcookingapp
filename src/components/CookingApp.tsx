@@ -257,14 +257,6 @@ export default function CookingApp() {
         className="relative overflow-hidden"
         style={{ background: "linear-gradient(165deg, #FDEEDD 0%, #FEF3E6 30%, #FDF8F2 60%, #F7F6F4 100%)" }}
       >
-        {/* Tomato illustration — left gutter, only at lg+ where gutters are ≥176px */}
-        <div aria-hidden className="pointer-events-none absolute left-0 bottom-0 w-36 opacity-70 hidden lg:block">
-          <TomatoDecoration />
-        </div>
-        {/* Pepper illustration — right gutter */}
-        <div aria-hidden className="pointer-events-none absolute right-0 top-6 w-24 opacity-65 hidden lg:block" style={{ transform: "rotate(10deg)" }}>
-          <PepperDecoration />
-        </div>
         {/* Text — constrained, z-10 so it's always above */}
         <div className="relative z-10 mx-auto max-w-2xl px-4 py-10 text-center select-none">
           <p className="text-xs font-semibold uppercase tracking-[0.14em] mb-3" style={{ color: "var(--accent)" }}>
@@ -284,7 +276,7 @@ export default function CookingApp() {
 
       <main className="mx-auto max-w-2xl px-4 pb-12 space-y-5 mt-5">
         {/* Input card */}
-        <Card className="recipe-input-card p-6 space-y-5 border border-[#E7E4DF] bg-white rounded-3xl">
+        <Card className="recipe-input-card p-6 space-y-5 border border-[#EDE8E0] bg-[#FEFCF8] rounded-3xl">
           {/* Image upload */}
           <div>
             <label className="block text-sm font-semibold text-[#1C1917] mb-2">
@@ -381,7 +373,7 @@ export default function CookingApp() {
                       "cuisine-btn flex flex-col items-center justify-center gap-0.5 rounded-2xl border py-2 px-3",
                       isSelected
                         ? "cuisine-btn--selected"
-                        : "border-[#E7E4DF] bg-white text-[#57534E] hover:border-[#C9BEAF]"
+                        : "border-[#EDE8E0] bg-[#FEFCF8] text-[#57534E] hover:border-[#C9BEAF]"
                     )}
                     onMouseEnter={(e) => { if (!isSelected) e.currentTarget.style.backgroundColor = opt.tint }}
                     onMouseLeave={(e) => { if (!isSelected) e.currentTarget.style.backgroundColor = "" }}
@@ -417,7 +409,7 @@ export default function CookingApp() {
 
         {/* Loading state */}
         {isLoading && (
-          <div className="flex items-center gap-3 rounded-2xl border border-[#E7E4DF] bg-white px-4 py-3.5 shadow-[0_1px_4px_rgba(28,25,23,0.05)]">
+          <div className="flex items-center gap-3 rounded-2xl border border-[#EDE8E0] bg-[#FEFCF8] px-4 py-3.5 shadow-[0_1px_4px_rgba(28,25,23,0.05)]">
             <Loader2 className="h-4 w-4 animate-spin shrink-0" style={{ color: "var(--accent)" }} />
             <p className="text-sm text-[#57534E]">Working on your recipe — usually takes 10–20 seconds.</p>
           </div>
