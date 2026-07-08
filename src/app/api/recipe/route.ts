@@ -2,6 +2,23 @@ import { NextRequest, NextResponse } from "next/server"
 import { start } from "workflow/api"
 import { findRecipeWorkflow, type RecipeInput } from "@/workflows/recipe"
 
+const SUPPORTED_IMAGE_TYPES = new Set(["image/jpeg", "image/png", "image/gif", "image/webp"])
+
+function validateImageDataUrl(dataUrl: string): { ok: true } | { ok: false; error: string } {
+  const match = dataUrl.match(/^data:([^;]+);base64,/)
+  if (!match) {
+    return { ok: false, error: "Image could not be read — please try a different file." }
+  }
+  const mimeType = match[1].toLowerCase()
+  if (!SUPPORTED_IMAGE_TYPES.has(mimeType)) {
+    return {
+      ok: false,
+      error: `Unsupported image format "${mimeType}". Please upload a JPEG, PNG, WebP, or GIF. For iPhone photos (HEIC) or PDFs, try converting to JPEG first.`,
+    }
+  }
+  return { ok: true }
+}
+
 export const runtime = "nodejs"
 export const dynamic = "force-dynamic"
 export const maxDuration = 60
@@ -28,6 +45,13 @@ export async function POST(request: NextRequest) {
 
   if (!ingredients && !imageBase64) {
     return NextResponse.json({ error: "No ingredients provided" }, { status: 400 })
+  }
+
+  if (imageBase64) {
+    const check = validateImageDataUrl(imageBase64)
+    if (!check.ok) {
+      return NextResponse.json({ error: check.error }, { status: 400 })
+    }
   }
 
   try {

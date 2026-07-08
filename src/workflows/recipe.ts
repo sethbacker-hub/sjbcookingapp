@@ -95,12 +95,21 @@ async function generateRecipeStep(input: RecipeInput): Promise<GeneratedRecipe> 
 
   // imageBase64 arrives as a data URL: "data:image/jpeg;base64,<data>"
   // The AI SDK ImagePart expects raw base64 + mimeType separately.
+  // Validate MIME type here so a bad format fails immediately, not after 3 retries.
+  const SUPPORTED = new Set(["image/jpeg", "image/png", "image/gif", "image/webp"])
   let imageContent: ContentPart | undefined
   if (imageBase64) {
     const match = imageBase64.match(/^data:([^;]+);base64,(.+)$/)
-    imageContent = match
-      ? { type: "image", image: match[2], mimeType: match[1] }
-      : { type: "image", image: imageBase64 }
+    if (!match) {
+      throw new Error("Image could not be read — please try a different file.")
+    }
+    const mimeType = match[1].toLowerCase()
+    if (!SUPPORTED.has(mimeType)) {
+      throw new Error(
+        `Unsupported image format "${mimeType}". Please upload a JPEG, PNG, WebP, or GIF. For iPhone photos (HEIC) or PDFs, your browser should convert them automatically — try re-uploading.`
+      )
+    }
+    imageContent = { type: "image", image: match[2], mimeType }
   }
 
   const userContent: string | ContentPart[] = imageContent
