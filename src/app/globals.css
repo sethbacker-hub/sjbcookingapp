@@ -2,20 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Texas brand tokens */
-:root {
-  --tex-burnt:   #BF5700; /* UT Austin burnt orange */
-  --tex-deep:    #8B1A1A; /* deep Texas red        */
-  --tex-tan:     #F5ECD7; /* warm parchment        */
-  --tex-dark:    #1C1008; /* near-black leather    */
-  --font-display: var(--font-teko), 'Impact', sans-serif;
-}
-
-.font-display {
-  font-family: var(--font-display);
-  letter-spacing: 0.01em;
-}
-
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -50,99 +36,67 @@
   }
 }
 
-/* ── Cuisine button: hover lift + selected pop ── */
-@keyframes cuisine-pop {
-  0%   { transform: scale(1); }
-  40%  { transform: scale(1.18); }
-  70%  { transform: scale(0.95); }
-  100% { transform: scale(1.05); }
-}
-
+/* ── Cuisine button ── */
 .cuisine-btn {
   transition: transform 150ms ease, box-shadow 150ms ease, border-color 150ms ease, background-color 150ms ease;
-  will-change: transform;
 }
 .cuisine-btn:hover:not(.cuisine-btn--selected) {
-  transform: scale(1.06);
-  box-shadow: 0 4px 12px -2px rgb(249 115 22 / 0.2);
+  transform: scale(1.03);
 }
 .cuisine-btn:active {
-  transform: scale(0.94);
+  transform: scale(0.97);
 }
 .cuisine-btn--selected {
-  animation: cuisine-pop 280ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-  box-shadow: 0 0 0 3px rgb(249 115 22 / 0.2);
+  transform: scale(1.02);
 }
 
-/* ── Submit button: press depth ── */
+/* ── Submit button ── */
 .recipe-submit-btn {
   transition: transform 120ms ease, box-shadow 120ms ease, background-color 150ms ease;
-  will-change: transform;
 }
 .recipe-submit-btn:hover:not(:disabled) {
   transform: translateY(-1px);
-  background-color: #A04800 !important;
-  box-shadow: 0 6px 16px -4px rgb(191 87 0 / 0.5);
+  box-shadow: 0 4px 12px -4px rgb(0 0 0 / 0.2);
 }
 .recipe-submit-btn:active:not(:disabled) {
-  transform: translateY(1px) scale(0.98);
-  background-color: #8B3D00 !important;
-  box-shadow: 0 1px 4px -2px rgb(191 87 0 / 0.3);
+  transform: translateY(0) scale(0.99);
+  box-shadow: none;
 }
 
-/* ── Drop zone: marching-ants border ── */
-@keyframes march {
-  to { stroke-dashoffset: -24; }
-}
-@keyframes dropzone-pulse {
-  0%, 100% { background-color: rgb(255 247 237); }
-  50%       { background-color: rgb(254 237 213); }
-}
+/* ── Drop zone: dragging state ── */
 .dropzone--dragging {
-  animation: dropzone-pulse 900ms ease-in-out infinite;
-}
-.dropzone--dragging .dropzone-icon {
-  animation: bounce 600ms ease-in-out infinite alternate;
-}
-@keyframes bounce {
-  from { transform: translateY(0); }
-  to   { transform: translateY(-6px); }
+  background-color: rgb(249 250 251);
 }
 
 /* ── Image scan overlay ── */
 @keyframes scan-line {
-  0%   { top: 0%; opacity: 1; }
-  90%  { top: 100%; opacity: 1; }
+  0%   { top: 0%; opacity: 0.8; }
+  90%  { top: 100%; opacity: 0.8; }
   100% { top: 100%; opacity: 0; }
 }
 .scan-line {
-  animation: scan-line 1.6s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-@keyframes scan-fade {
-  0%, 100% { opacity: 0.55; }
-  50%       { opacity: 0.7; }
+  animation: scan-line 2s ease-in-out infinite;
 }
 .scan-overlay {
-  animation: scan-fade 1.6s ease-in-out infinite;
+  opacity: 0.4;
 }
 
-/* ── Ingredient tag pop-in ── */
-@keyframes tag-pop {
-  0%   { opacity: 0; transform: scale(0.6) translateY(6px); }
-  70%  { transform: scale(1.08) translateY(-1px); }
-  100% { opacity: 1; transform: scale(1) translateY(0); }
+/* ── Ingredient tag fade-in ── */
+@keyframes tag-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 .ingredient-tag {
   opacity: 0;
-  animation: tag-pop 300ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  animation: tag-in 200ms ease forwards;
 }
 
-/* ── Ingredient textarea: focus glow ── */
+/* ── Ingredient textarea: focus ring ── */
 .ingredient-textarea {
-  transition: box-shadow 200ms ease, border-color 200ms ease;
+  transition: box-shadow 150ms ease, border-color 150ms ease;
 }
 .ingredient-textarea:focus {
   outline: none;
-  border-color: rgb(251 146 60);
-  box-shadow: 0 0 0 3px rgb(249 115 22 / 0.15), 0 1px 3px rgb(0 0 0 / 0.06);
+  border-color: rgb(156 163 175);
+  box-shadow: 0 0 0 3px rgb(0 0 0 / 0.06);
 }
