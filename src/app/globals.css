@@ -74,6 +74,53 @@
   box-shadow: 0 1px 4px -2px rgb(249 115 22 / 0.3);
 }
 
+/* ── Drop zone: marching-ants border ── */
+@keyframes march {
+  to { stroke-dashoffset: -24; }
+}
+@keyframes dropzone-pulse {
+  0%, 100% { background-color: rgb(255 247 237); }
+  50%       { background-color: rgb(254 237 213); }
+}
+.dropzone--dragging {
+  animation: dropzone-pulse 900ms ease-in-out infinite;
+}
+.dropzone--dragging .dropzone-icon {
+  animation: bounce 600ms ease-in-out infinite alternate;
+}
+@keyframes bounce {
+  from { transform: translateY(0); }
+  to   { transform: translateY(-6px); }
+}
+
+/* ── Image scan overlay ── */
+@keyframes scan-line {
+  0%   { top: 0%; opacity: 1; }
+  90%  { top: 100%; opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+.scan-line {
+  animation: scan-line 1.6s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+@keyframes scan-fade {
+  0%, 100% { opacity: 0.55; }
+  50%       { opacity: 0.7; }
+}
+.scan-overlay {
+  animation: scan-fade 1.6s ease-in-out infinite;
+}
+
+/* ── Ingredient tag pop-in ── */
+@keyframes tag-pop {
+  0%   { opacity: 0; transform: scale(0.6) translateY(6px); }
+  70%  { transform: scale(1.08) translateY(-1px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+.ingredient-tag {
+  opacity: 0;
+  animation: tag-pop 300ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
 /* ── Ingredient textarea: focus glow ── */
 .ingredient-textarea {
   transition: box-shadow 200ms ease, border-color 200ms ease;

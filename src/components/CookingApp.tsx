@@ -226,6 +226,15 @@ export default function CookingApp() {
               <div className="relative rounded-lg overflow-hidden border bg-gray-50">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={imagePreview} alt="Fridge preview" className="w-full max-h-52 object-cover" />
+                {/* Scanning overlay while loading */}
+                {isLoading && (
+                  <div className="scan-overlay absolute inset-0 bg-orange-950/30 pointer-events-none">
+                    <div className="scan-line absolute left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-orange-400 to-transparent shadow-[0_0_8px_2px_rgb(251_146_60/0.7)]" />
+                    <div className="absolute inset-0 flex flex-col items-center justify-center gap-1.5">
+                      <span className="text-xs font-semibold text-orange-100 tracking-widest uppercase drop-shadow">Scanning ingredients…</span>
+                    </div>
+                  </div>
+                )}
                 <Button
                   size="icon"
                   variant="destructive"
@@ -238,17 +247,25 @@ export default function CookingApp() {
             ) : (
               <div
                 className={cn(
-                  "flex flex-col items-center justify-center rounded-lg border-2 border-dashed p-6 cursor-pointer transition-colors",
-                  isDragging ? "border-orange-400 bg-orange-50" : "border-gray-200 hover:border-orange-300 hover:bg-orange-50/50"
+                  "flex flex-col items-center justify-center rounded-lg border-2 border-dashed p-6 cursor-pointer transition-colors duration-200",
+                  isDragging
+                    ? "dropzone--dragging border-orange-400"
+                    : "border-gray-200 hover:border-orange-300 hover:bg-orange-50/50"
                 )}
                 onDragOver={(e) => { e.preventDefault(); setIsDragging(true) }}
                 onDragLeave={() => setIsDragging(false)}
                 onDrop={handleDrop}
                 onClick={() => fileInputRef.current?.click()}
               >
-                <Upload className="h-8 w-8 text-gray-300 mb-2" />
-                <p className="text-sm text-gray-500">Drop a fridge photo here or <span className="text-orange-500 font-medium">browse</span></p>
-                <p className="text-xs text-gray-400 mt-1">PNG, JPG, HEIC, WebP, PDF (first page) up to 10MB</p>
+                <Upload className={cn("h-8 w-8 mb-2 transition-colors duration-200 dropzone-icon", isDragging ? "text-orange-400" : "text-gray-300")} />
+                {isDragging ? (
+                  <p className="text-sm font-semibold text-orange-500">Drop it!</p>
+                ) : (
+                  <>
+                    <p className="text-sm text-gray-500">Drop a fridge photo here or <span className="text-orange-500 font-medium">browse</span></p>
+                    <p className="text-xs text-gray-400 mt-1">PNG, JPG, HEIC, WebP, PDF (first page) up to 10MB</p>
+                  </>
+                )}
               </div>
             )}
             <input
@@ -333,6 +350,24 @@ export default function CookingApp() {
               >
                 Dismiss
               </Button>
+            </div>
+          </div>
+        )}
+
+        {/* Detected ingredient tags — only when image was used */}
+        {recipe && !isLoading && imagePreview && recipe.ingredients.length > 0 && (
+          <div className="space-y-2">
+            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider px-1">Detected from your photo</p>
+            <div className="flex flex-wrap gap-2">
+              {recipe.ingredients.map((ing, i) => (
+                <span
+                  key={ing}
+                  className="ingredient-tag inline-flex items-center rounded-full bg-orange-50 border border-orange-200 px-3 py-1 text-xs font-medium text-orange-700"
+                  style={{ animationDelay: `${i * 60}ms` }}
+                >
+                  {ing}
+                </span>
+              ))}
             </div>
           </div>
         )}
