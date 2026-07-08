@@ -270,7 +270,7 @@ export default function CookingApp() {
               onChange={(e) => setIngredients(e.target.value)}
               placeholder="e.g. chicken thighs, garlic, lemon, cherry tomatoes, spinach..."
               rows={3}
-              className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent resize-none"
+              className="ingredient-textarea w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm placeholder:text-gray-400 resize-none"
             />
           </div>
 
@@ -283,9 +283,9 @@ export default function CookingApp() {
                   key={opt.value}
                   onClick={() => setCuisine(opt.value)}
                   className={cn(
-                    "flex flex-col items-center justify-center gap-1 rounded-xl border-2 py-2.5 px-3 font-medium transition-all",
+                    "cuisine-btn flex flex-col items-center justify-center gap-1 rounded-xl border-2 py-2.5 px-3 font-medium",
                     cuisine === opt.value
-                      ? "border-orange-400 bg-orange-50 text-orange-700 shadow-sm"
+                      ? "cuisine-btn--selected border-orange-400 bg-orange-50 text-orange-700"
                       : "border-gray-100 bg-white text-gray-600 hover:border-orange-200 hover:bg-orange-50/50"
                   )}
                 >
@@ -300,7 +300,7 @@ export default function CookingApp() {
           <Button
             onClick={() => runWorkflow()}
             disabled={isLoading}
-            className="w-full h-11 text-base font-semibold bg-orange-500 hover:bg-orange-600 text-white shadow-md hover:shadow-lg transition-all"
+            className="recipe-submit-btn w-full h-11 text-base font-semibold bg-orange-500 hover:bg-orange-600 text-white shadow-md"
           >
             {isLoading ? (
               <><Loader2 className="h-5 w-5 animate-spin" /> Working on it...</>
