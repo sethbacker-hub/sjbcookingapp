@@ -9,6 +9,48 @@ import { Recipe, CuisineType, ModifierType } from "@/types/recipe"
 import { ChefHat, Upload, X, BookOpen, Loader2, AlertCircle } from "lucide-react"
 import { cn } from "@/lib/utils"
 
+/** Convert any image file (including HEIC and PDF) to a JPEG data URL. */
+async function normalizeImageFile(file: File): Promise<{ dataUrl: string; previewUrl: string }> {
+  const type = file.type.toLowerCase()
+
+  // HEIC / HEIF — convert with heic2any
+  if (type === "image/heic" || type === "image/heif" || file.name.toLowerCase().endsWith(".heic") || file.name.toLowerCase().endsWith(".heif")) {
+    const heic2any = (await import("heic2any")).default
+    const blob = await heic2any({ blob: file, toType: "image/jpeg", quality: 0.85 }) as Blob
+    const dataUrl = await blobToDataUrl(blob)
+    return { dataUrl, previewUrl: dataUrl }
+  }
+
+  // PDF — render first page to canvas via pdfjs-dist
+  if (type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf")) {
+    const pdfjsLib = await import("pdfjs-dist")
+    pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`
+    const arrayBuffer = await file.arrayBuffer()
+    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise
+    const page = await pdf.getPage(1)
+    const viewport = page.getViewport({ scale: 1.5 })
+    const canvas = document.createElement("canvas")
+    canvas.width = viewport.width
+    canvas.height = viewport.height
+    await page.render({ canvasContext: canvas.getContext("2d")!, viewport, canvas }).promise
+    const dataUrl = canvas.toDataURL("image/jpeg", 0.85)
+    return { dataUrl, previewUrl: dataUrl }
+  }
+
+  // Everything else — read as-is (PNG, JPEG, WebP, GIF are all fine)
+  const dataUrl = await blobToDataUrl(file)
+  return { dataUrl, previewUrl: dataUrl }
+}
+
+function blobToDataUrl(blob: Blob): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = () => resolve(reader.result as string)
+    reader.onerror = reject
+    reader.readAsDataURL(blob)
+  })
+}
+
 const CUISINE_OPTIONS = [
   { value: "italian" as CuisineType, label: "Italian", emoji: "🇮🇹" },
   { value: "japanese" as CuisineType, label: "Japanese", emoji: "🇯🇵" },
@@ -22,6 +64,8 @@ export default function CookingApp() {
   const [ingredients, setIngredients] = useState("")
   const [imageFile, setImageFile] = useState<File | null>(null)
   const [imagePreview, setImagePreview] = useState<string | null>(null)
+  const [imageDataUrl, setImageDataUrl] = useState<string | null>(null)
+  const [isConverting, setIsConverting] = useState(false)
   const [cuisine, setCuisine] = useState<CuisineType>("surprise")
   const [recipe, setRecipe] = useState<Recipe | null>(null)
   const [isLoading, setIsLoading] = useState(false)
@@ -47,23 +91,34 @@ export default function CookingApp() {
     setSavedIds(new Set(updated.map((r) => r.id)))
   }
 
-  const handleImageSelect = (file: File) => {
+  const handleImageSelect = async (file: File) => {
     setImageFile(file)
-    const reader = new FileReader()
-    reader.onload = () => setImagePreview(reader.result as string)
-    reader.readAsDataURL(file)
+    setIsConverting(true)
+    setError(null)
+    try {
+      const { dataUrl, previewUrl } = await normalizeImageFile(file)
+      setImageDataUrl(dataUrl)
+      setImagePreview(previewUrl)
+    } catch (err) {
+      setError(`Could not process image: ${err instanceof Error ? err.message : "Unknown error"}`)
+      setImageFile(null)
+    } finally {
+      setIsConverting(false)
+    }
   }
 
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault()
     setIsDragging(false)
     const file = e.dataTransfer.files[0]
-    if (file && file.type.startsWith("image/")) handleImageSelect(file)
+    if (file) handleImageSelect(file)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const removeImage = () => {
     setImageFile(null)
     setImagePreview(null)
+    setImageDataUrl(null)
     if (fileInputRef.current) fileInputRef.current.value = ""
   }
 
@@ -77,14 +132,8 @@ export default function CookingApp() {
     setError(null)
     setRecipe(null)
 
-    let imageBase64: string | undefined
-    if (imageFile) {
-      imageBase64 = await new Promise<string>((resolve) => {
-        const reader = new FileReader()
-        reader.onload = () => resolve(reader.result as string)
-        reader.readAsDataURL(imageFile)
-      })
-    }
+    // imageDataUrl is already normalized to a supported format (JPEG/PNG)
+    const imageBase64 = imageDataUrl ?? undefined
 
     try {
       const res = await fetch("/api/recipe", {
@@ -161,7 +210,12 @@ export default function CookingApp() {
             <label className="block text-sm font-semibold text-gray-700 mb-2">
               Upload a photo <span className="font-normal text-gray-400">(optional)</span>
             </label>
-            {imagePreview ? (
+            {isConverting ? (
+              <div className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-orange-300 bg-orange-50 p-6">
+                <Loader2 className="h-8 w-8 text-orange-400 animate-spin mb-2" />
+                <p className="text-sm text-orange-600 font-medium">Converting image…</p>
+              </div>
+            ) : imagePreview ? (
               <div className="relative rounded-lg overflow-hidden border bg-gray-50">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={imagePreview} alt="Fridge preview" className="w-full max-h-52 object-cover" />
@@ -187,13 +241,13 @@ export default function CookingApp() {
               >
                 <Upload className="h-8 w-8 text-gray-300 mb-2" />
                 <p className="text-sm text-gray-500">Drop a fridge photo here or <span className="text-orange-500 font-medium">browse</span></p>
-                <p className="text-xs text-gray-400 mt-1">PNG, JPG up to 10MB</p>
+                <p className="text-xs text-gray-400 mt-1">PNG, JPG, HEIC, WebP, PDF (first page) up to 10MB</p>
               </div>
             )}
             <input
               ref={fileInputRef}
               type="file"
-              accept="image/*"
+              accept="image/*,.heic,.heif,.pdf"
               className="hidden"
               onChange={(e) => { const f = e.target.files?.[0]; if (f) handleImageSelect(f) }}
             />
