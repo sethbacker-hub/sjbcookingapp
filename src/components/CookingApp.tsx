@@ -174,24 +174,25 @@ export default function CookingApp() {
   const handleSelectSaved = (r: Recipe) => setRecipe(r)
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen" style={{ backgroundColor: "#F7F6F4" }}>
       {/* Nav */}
-      <header className="sticky top-0 z-40 border-b bg-white/90 backdrop-blur-sm">
+      <header className="sticky top-0 z-40 border-b border-[#E7E4DF] bg-[#F7F6F4]/90 backdrop-blur-sm">
         <div className="mx-auto flex max-w-2xl items-center justify-between px-4 py-3">
           <div className="flex items-center gap-2">
-            <ChefHat className="h-5 w-5 text-gray-700" />
-            <span className="text-base font-semibold text-gray-900 tracking-tight">Big Tex Cooking Engine</span>
+            <ChefHat className="h-4 w-4" style={{ color: "var(--accent)" }} />
+            <span className="font-display text-[15px] font-700 tracking-tight text-[#1C1917]" style={{ fontWeight: 700 }}>Big Tex</span>
           </div>
           <Button
             variant="outline"
             size="sm"
             onClick={() => setDrawerOpen(true)}
-            className="gap-2"
+            className="gap-1.5 border-[#E7E4DF] bg-white text-[#1C1917] hover:bg-[#F0EDE8] text-xs h-8"
           >
-            <BookOpen className="h-4 w-4" />
-            <span className="hidden sm:inline">Saved</span>
+            <BookOpen className="h-3.5 w-3.5" />
+            <span className="hidden sm:inline">Saved recipes</span>
+            <span className="sm:hidden">Saved</span>
             {savedRecipes.length > 0 && (
-              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-gray-900 text-white text-xs font-medium">
+              <span className="flex h-4 w-4 items-center justify-center rounded-full text-white text-[10px] font-semibold" style={{ backgroundColor: "var(--accent)" }}>
                 {savedRecipes.length}
               </span>
             )}
@@ -199,28 +200,39 @@ export default function CookingApp() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-2xl px-4 py-8 space-y-6">
-        {/* Hero text */}
-        <div className="text-center space-y-2">
-          <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-gray-900">
+      <main className="mx-auto max-w-2xl px-4 pb-12 space-y-5">
+        {/* Hero */}
+        <div className="relative pt-10 pb-8 text-center overflow-hidden">
+          {/* Soft radial glow behind headline */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-x-0 top-0 h-52"
+            style={{
+              background: "radial-gradient(ellipse 80% 60% at 50% 0%, rgb(204 78 13 / 0.08) 0%, transparent 70%)",
+            }}
+          />
+          <p className="text-xs font-semibold uppercase tracking-[0.12em] mb-3" style={{ color: "var(--accent)" }}>
+            AI Recipe Generator
+          </p>
+          <h1 className="font-display text-[2.6rem] sm:text-[3.2rem] font-extrabold leading-[1.08] tracking-tight text-[#1C1917]" style={{ textWrap: "balance" } as React.CSSProperties}>
             Big Tex Cooking Engine
           </h1>
-          <p className="text-gray-500 text-base">
-            Tell us what you have. We&apos;ll find what to cook.
+          <p className="mt-3 text-[#78716C] text-base leading-relaxed">
+            Drop in what&apos;s in your kitchen — we&apos;ll turn it into something worth eating.
           </p>
         </div>
 
         {/* Input card */}
-        <Card className="p-6 space-y-5 border border-gray-200 shadow-sm">
+        <Card className="recipe-input-card p-6 space-y-5 border border-[#E7E4DF] bg-white rounded-2xl shadow-[0_1px_4px_rgba(28,25,23,0.06),0_4px_16px_rgba(28,25,23,0.04)]">
           {/* Image upload */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Upload a photo <span className="font-normal text-gray-400">(optional)</span>
+            <label className="block text-sm font-semibold text-[#1C1917] mb-2">
+              Upload a photo <span className="font-normal text-[#A8A29E]">(optional)</span>
             </label>
             {isConverting ? (
-              <div className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-200 bg-gray-50 p-6">
-                <Loader2 className="h-8 w-8 text-gray-400 animate-spin mb-2" />
-                <p className="text-sm text-gray-500 font-medium">Converting image…</p>
+              <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-[#E7E4DF] bg-[#F7F6F4] p-6">
+                <Loader2 className="h-7 w-7 animate-spin mb-2" style={{ color: "var(--accent)" }} />
+                <p className="text-sm text-[#78716C]">Converting image…</p>
               </div>
             ) : imagePreview ? (
               <div className="relative rounded-lg overflow-hidden border bg-gray-50">
@@ -228,10 +240,10 @@ export default function CookingApp() {
                 <img src={imagePreview} alt="Fridge preview" className="w-full max-h-52 object-cover" />
                 {/* Scanning overlay while loading */}
                 {isLoading && (
-                  <div className="scan-overlay absolute inset-0 bg-gray-900/25 pointer-events-none">
-                    <div className="scan-line absolute left-0 right-0 h-px bg-gradient-to-r from-transparent via-white to-transparent" />
-                    <div className="absolute inset-0 flex flex-col items-center justify-center gap-1.5">
-                      <span className="text-xs font-medium text-white/90 tracking-widest uppercase">Scanning…</span>
+                  <div className="scan-overlay absolute inset-0 bg-[#1C1917]/30 pointer-events-none rounded-xl">
+                    <div className="scan-line absolute left-0 right-0 h-[1.5px] bg-gradient-to-r from-transparent via-white/80 to-transparent" />
+                    <div className="absolute inset-0 flex flex-col items-center justify-center">
+                      <span className="text-[11px] font-semibold text-white/80 tracking-[0.14em] uppercase">Scanning…</span>
                     </div>
                   </div>
                 )}
@@ -247,23 +259,23 @@ export default function CookingApp() {
             ) : (
               <div
                 className={cn(
-                  "flex flex-col items-center justify-center rounded-lg border-2 border-dashed p-6 cursor-pointer transition-colors duration-150",
+                  "flex flex-col items-center justify-center rounded-xl border-2 border-dashed p-6 cursor-pointer transition-colors duration-150",
                   isDragging
-                    ? "dropzone--dragging border-gray-400 bg-gray-50"
-                    : "border-gray-200 hover:border-gray-300 hover:bg-gray-50"
+                    ? "dropzone--dragging"
+                    : "border-[#E7E4DF] hover:border-[#C9BEAF] hover:bg-[#F7F6F4]"
                 )}
                 onDragOver={(e) => { e.preventDefault(); setIsDragging(true) }}
                 onDragLeave={() => setIsDragging(false)}
                 onDrop={handleDrop}
                 onClick={() => fileInputRef.current?.click()}
               >
-                <Upload className={cn("h-7 w-7 mb-2 transition-colors duration-150", isDragging ? "text-gray-500" : "text-gray-300")} />
+                <Upload className={cn("h-6 w-6 mb-2 transition-colors duration-150", isDragging ? "text-[#CC4E0D]" : "text-[#C9BEAF]")} />
                 {isDragging ? (
-                  <p className="text-sm font-medium text-gray-600">Release to upload</p>
+                  <p className="text-sm font-medium" style={{ color: "var(--accent)" }}>Release to upload</p>
                 ) : (
                   <>
-                    <p className="text-sm text-gray-500">Drop a photo here or <span className="text-gray-700 font-medium">browse</span></p>
-                    <p className="text-xs text-gray-400 mt-1">PNG, JPG, HEIC, WebP, PDF up to 10 MB</p>
+                    <p className="text-sm text-[#78716C]">Drop a fridge photo here or <span className="font-medium text-[#1C1917]">browse</span></p>
+                    <p className="text-xs text-[#A8A29E] mt-1">PNG, JPG, HEIC, WebP, PDF — up to 10 MB</p>
                   </>
                 )}
               </div>
@@ -279,7 +291,7 @@ export default function CookingApp() {
 
           {/* Ingredients text */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
+            <label className="block text-sm font-semibold text-[#1C1917] mb-2">
               Or type your ingredients
             </label>
             <textarea
@@ -287,27 +299,27 @@ export default function CookingApp() {
               onChange={(e) => setIngredients(e.target.value)}
               placeholder="e.g. chicken thighs, garlic, lemon, cherry tomatoes, spinach..."
               rows={3}
-              className="ingredient-textarea w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm placeholder:text-gray-400 resize-none"
+              className="ingredient-textarea w-full rounded-xl border border-[#E7E4DF] bg-[#FAFAF8] px-3 py-2.5 text-sm text-[#1C1917] placeholder:text-[#C4B8AF] resize-none"
             />
           </div>
 
           {/* Cuisine selector */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Cuisine</label>
+            <label className="block text-sm font-semibold text-[#1C1917] mb-2">Cuisine</label>
             <div className="flex flex-wrap gap-2">
               {CUISINE_OPTIONS.map((opt) => (
                 <button
                   key={opt.value}
                   onClick={() => setCuisine(opt.value)}
                   className={cn(
-                    "cuisine-btn flex flex-col items-center justify-center gap-0.5 rounded-lg border py-2 px-3 text-sm",
+                    "cuisine-btn flex flex-col items-center justify-center gap-0.5 rounded-xl border py-2 px-3",
                     cuisine === opt.value
-                      ? "cuisine-btn--selected border-gray-900 bg-gray-900 text-white"
-                      : "border-gray-200 bg-white text-gray-600 hover:border-gray-300 hover:bg-gray-50"
+                      ? "cuisine-btn--selected"
+                      : "border-[#E7E4DF] bg-white text-[#57534E] hover:bg-[#F7F6F4]"
                   )}
                 >
-                  <span className="text-base leading-none">{opt.emoji}</span>
-                  <span className="text-xs whitespace-nowrap mt-0.5">{opt.label}</span>
+                  <span className="text-[17px] leading-none">{opt.emoji}</span>
+                  <span className="text-[11px] font-medium whitespace-nowrap mt-0.5">{opt.label}</span>
                 </button>
               ))}
             </div>
@@ -317,21 +329,28 @@ export default function CookingApp() {
           <Button
             onClick={() => runWorkflow()}
             disabled={isLoading}
-            className="recipe-submit-btn w-full h-11 text-sm font-semibold text-white bg-gray-900 hover:bg-gray-800"
+            className="recipe-submit-btn w-full h-11 font-display font-bold text-[15px] text-white tracking-tight"
           >
             {isLoading ? (
-              <><Loader2 className="h-4 w-4 animate-spin" /> Generating recipe…</>
+              <span className="flex items-center gap-2.5">
+                <span className="flex gap-1">
+                  <span className="loading-dot h-1.5 w-1.5 rounded-full bg-white/80 inline-block" />
+                  <span className="loading-dot h-1.5 w-1.5 rounded-full bg-white/80 inline-block" />
+                  <span className="loading-dot h-1.5 w-1.5 rounded-full bg-white/80 inline-block" />
+                </span>
+                Generating your recipe
+              </span>
             ) : (
-              <>Find me a recipe</>
+              "Find me a recipe"
             )}
           </Button>
         </Card>
 
         {/* Loading state */}
         {isLoading && (
-          <div className="flex items-center gap-3 rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
-            <Loader2 className="h-4 w-4 animate-spin text-gray-500 shrink-0" />
-            <p className="text-sm text-gray-600">Generating your recipe…</p>
+          <div className="flex items-center gap-3 rounded-xl border border-[#E7E4DF] bg-white px-4 py-3.5 shadow-[0_1px_4px_rgba(28,25,23,0.05)]">
+            <Loader2 className="h-4 w-4 animate-spin shrink-0" style={{ color: "var(--accent)" }} />
+            <p className="text-sm text-[#57534E]">Working on your recipe — usually takes 10–20 seconds.</p>
           </div>
         )}
 
@@ -357,13 +376,13 @@ export default function CookingApp() {
         {/* Detected ingredient tags — only when image was used */}
         {recipe && !isLoading && imagePreview && recipe.ingredients.length > 0 && (
           <div className="space-y-2">
-            <p className="text-xs font-medium text-gray-400 uppercase tracking-wider px-1">Detected from your photo</p>
-            <div className="flex flex-wrap gap-2">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-[#A8A29E] px-1">Detected from your photo</p>
+            <div className="flex flex-wrap gap-1.5">
               {recipe.ingredients.map((ing, i) => (
                 <span
                   key={ing}
-                  className="ingredient-tag inline-flex items-center rounded-full bg-white border border-gray-200 px-3 py-1 text-xs text-gray-600"
-                  style={{ animationDelay: `${i * 50}ms` }}
+                  className="ingredient-tag inline-flex items-center rounded-full bg-white border border-[#E7E4DF] px-2.5 py-1 text-xs text-[#57534E]"
+                  style={{ animationDelay: `${i * 45}ms` }}
                 >
                   {ing}
                 </span>

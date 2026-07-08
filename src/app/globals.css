@@ -2,6 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --accent:       #CC4E0D;
+  --accent-hover: #B34309;
+  --accent-light: #FEF0EA;
+  --accent-mid:   #F97316;  /* for shadows only */
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -20,10 +27,10 @@
     --accent-foreground: 222.2 47.4% 11.2%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
+    --border: 30 10% 88%;
+    --input: 30 10% 88%;
     --ring: 222.2 84% 4.9%;
-    --radius: 0.5rem;
+    --radius: 0.75rem;
   }
 }
 
@@ -33,70 +40,108 @@
   }
   body {
     @apply bg-background text-foreground;
+    background-color: #F7F6F4;
   }
 }
 
-/* ── Cuisine button ── */
+/* ── Display font utility ── */
+.font-display {
+  font-family: var(--font-jakarta), 'Inter', sans-serif;
+}
+
+/* ── Cuisine buttons ── */
 .cuisine-btn {
-  transition: transform 150ms ease, box-shadow 150ms ease, border-color 150ms ease, background-color 150ms ease;
+  transition: transform 140ms ease, box-shadow 140ms ease,
+              border-color 140ms ease, background-color 140ms ease,
+              color 140ms ease;
+  will-change: transform;
 }
 .cuisine-btn:hover:not(.cuisine-btn--selected) {
-  transform: scale(1.03);
+  transform: translateY(-1px);
+  border-color: #D1C9BF;
 }
 .cuisine-btn:active {
   transform: scale(0.97);
 }
 .cuisine-btn--selected {
+  border-color: var(--accent) !important;
+  background-color: var(--accent-light) !important;
+  color: var(--accent) !important;
   transform: scale(1.02);
+  box-shadow: 0 0 0 1px var(--accent);
 }
 
-/* ── Submit button ── */
+/* ── Submit / CTA button ── */
 .recipe-submit-btn {
-  transition: transform 120ms ease, box-shadow 120ms ease, background-color 150ms ease;
+  background-color: var(--accent) !important;
+  transition: transform 130ms ease, box-shadow 130ms ease, background-color 140ms ease;
+  will-change: transform;
 }
 .recipe-submit-btn:hover:not(:disabled) {
+  background-color: var(--accent-hover) !important;
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px -4px rgb(0 0 0 / 0.2);
+  box-shadow: 0 6px 20px -6px rgb(204 78 13 / 0.45);
 }
 .recipe-submit-btn:active:not(:disabled) {
-  transform: translateY(0) scale(0.99);
-  box-shadow: none;
+  transform: translateY(0) scale(0.985);
+  box-shadow: 0 2px 6px -2px rgb(204 78 13 / 0.3);
+}
+.recipe-submit-btn:disabled {
+  background-color: #C4B8AF !important;
 }
 
-/* ── Drop zone: dragging state ── */
+/* ── Input focus ── */
+.ingredient-textarea {
+  transition: box-shadow 160ms ease, border-color 160ms ease;
+}
+.ingredient-textarea:focus {
+  outline: none;
+  border-color: #C9BEAF;
+  box-shadow: 0 0 0 3px rgb(204 78 13 / 0.10);
+}
+
+/* ── Drop zone ── */
 .dropzone--dragging {
-  background-color: rgb(249 250 251);
+  border-color: var(--accent) !important;
+  background-color: var(--accent-light) !important;
 }
 
 /* ── Image scan overlay ── */
 @keyframes scan-line {
-  0%   { top: 0%; opacity: 0.8; }
-  90%  { top: 100%; opacity: 0.8; }
+  0%   { top: 0%;   opacity: 0; }
+  5%   { opacity: 1; }
+  90%  { top: 100%; opacity: 1; }
   100% { top: 100%; opacity: 0; }
 }
 .scan-line {
-  animation: scan-line 2s ease-in-out infinite;
+  animation: scan-line 2.4s ease-in-out infinite;
 }
 .scan-overlay {
-  opacity: 0.4;
+  opacity: 0.35;
 }
 
-/* ── Ingredient tag fade-in ── */
+/* ── Ingredient tag stagger-in ── */
 @keyframes tag-in {
-  from { opacity: 0; transform: translateY(4px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(5px) scale(0.95); }
+  to   { opacity: 1; transform: translateY(0)   scale(1);    }
 }
 .ingredient-tag {
   opacity: 0;
-  animation: tag-in 200ms ease forwards;
+  animation: tag-in 220ms cubic-bezier(0.25, 1, 0.5, 1) forwards;
 }
 
-/* ── Ingredient textarea: focus ring ── */
-.ingredient-textarea {
-  transition: box-shadow 150ms ease, border-color 150ms ease;
+/* ── Loading dots ── */
+@keyframes dot-bounce {
+  0%, 80%, 100% { transform: translateY(0);   opacity: 0.4; }
+  40%           { transform: translateY(-4px); opacity: 1;   }
 }
-.ingredient-textarea:focus {
-  outline: none;
-  border-color: rgb(156 163 175);
-  box-shadow: 0 0 0 3px rgb(0 0 0 / 0.06);
+.loading-dot {
+  animation: dot-bounce 1.2s ease-in-out infinite;
+}
+.loading-dot:nth-child(2) { animation-delay: 0.15s; }
+.loading-dot:nth-child(3) { animation-delay: 0.30s; }
+
+/* ── Card hover ── */
+.recipe-input-card {
+  transition: box-shadow 200ms ease;
 }
