@@ -2,6 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Texas brand tokens */
+:root {
+  --tex-burnt:   #BF5700; /* UT Austin burnt orange */
+  --tex-deep:    #8B1A1A; /* deep Texas red        */
+  --tex-tan:     #F5ECD7; /* warm parchment        */
+  --tex-dark:    #1C1008; /* near-black leather    */
+  --font-display: var(--font-teko), 'Impact', sans-serif;
+}
+
+.font-display {
+  font-family: var(--font-display);
+  letter-spacing: 0.01em;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -67,11 +81,13 @@
 }
 .recipe-submit-btn:hover:not(:disabled) {
   transform: translateY(-1px);
-  box-shadow: 0 6px 16px -4px rgb(249 115 22 / 0.45);
+  background-color: #A04800 !important;
+  box-shadow: 0 6px 16px -4px rgb(191 87 0 / 0.5);
 }
 .recipe-submit-btn:active:not(:disabled) {
   transform: translateY(1px) scale(0.98);
-  box-shadow: 0 1px 4px -2px rgb(249 115 22 / 0.3);
+  background-color: #8B3D00 !important;
+  box-shadow: 0 1px 4px -2px rgb(191 87 0 / 0.3);
 }
 
 /* ── Drop zone: marching-ants border ── */

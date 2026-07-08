@@ -174,13 +174,13 @@ export default function CookingApp() {
   const handleSelectSaved = (r: Recipe) => setRecipe(r)
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50">
+    <div className="min-h-screen" style={{ background: "linear-gradient(135deg, #FDF3E3 0%, #FAE8CC 50%, #F5D9B0 100%)" }}>
       {/* Nav */}
       <header className="sticky top-0 z-40 border-b bg-white/80 backdrop-blur-sm">
         <div className="mx-auto flex max-w-2xl items-center justify-between px-4 py-3">
           <div className="flex items-center gap-2">
-            <ChefHat className="h-6 w-6 text-orange-500" />
-            <span className="font-bold text-gray-900 text-lg">Cook Tonight</span>
+            <span className="text-2xl leading-none">🤠</span>
+            <span className="font-display text-xl font-bold tracking-wide" style={{ color: "var(--tex-burnt)" }}>Big Tex Cooking Engine</span>
           </div>
           <Button
             variant="outline"
@@ -202,11 +202,15 @@ export default function CookingApp() {
       <main className="mx-auto max-w-2xl px-4 py-8 space-y-6">
         {/* Hero text */}
         <div className="text-center space-y-2">
-          <h1 className="text-3xl sm:text-4xl font-black text-gray-900 tracking-tight">
-            What Should I Cook Tonight?
-          </h1>
-          <p className="text-gray-500 text-base">
-            Tell us what you have — we&apos;ll find you something delicious.
+          <div className="flex items-center justify-center gap-3 mb-1">
+            <span className="text-3xl">⭐</span>
+            <h1 className="font-display text-5xl sm:text-6xl font-bold leading-none" style={{ color: "var(--tex-burnt)" }}>
+              Big Tex Cooking Engine
+            </h1>
+            <span className="text-3xl">⭐</span>
+          </div>
+          <p className="text-gray-600 text-base font-medium italic">
+            Y&apos;all got ingredients? We got recipes.
           </p>
         </div>
 
@@ -293,7 +297,7 @@ export default function CookingApp() {
 
           {/* Cuisine selector */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Choose a cuisine vibe</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">Pick your flavor territory</label>
             <div className="flex flex-wrap gap-2">
               {CUISINE_OPTIONS.map((opt) => (
                 <button
@@ -317,12 +321,13 @@ export default function CookingApp() {
           <Button
             onClick={() => runWorkflow()}
             disabled={isLoading}
-            className="recipe-submit-btn w-full h-11 text-base font-semibold bg-orange-500 hover:bg-orange-600 text-white shadow-md"
+            className="recipe-submit-btn w-full h-12 text-base font-display font-bold tracking-wide text-white shadow-md"
+            style={{ backgroundColor: "var(--tex-burnt)" }}
           >
             {isLoading ? (
-              <><Loader2 className="h-5 w-5 animate-spin" /> Working on it...</>
+              <><Loader2 className="h-5 w-5 animate-spin" /> Workin&apos; on it, pardner…</>
             ) : (
-              <><ChefHat className="h-5 w-5" /> Find me a recipe</>
+              <>🤠 Rustle me up a recipe</>
             )}
           </Button>
         </Card>
@@ -331,7 +336,7 @@ export default function CookingApp() {
         {isLoading && (
           <div className="flex items-center gap-3 rounded-xl border bg-white p-4 shadow-sm">
             <Loader2 className="h-5 w-5 animate-spin text-orange-500 shrink-0" />
-            <p className="text-sm font-semibold text-gray-800">Finding you a recipe...</p>
+            <p className="text-sm font-semibold text-gray-800">Big Tex is cookin&apos; something up…</p>
           </div>
         )}
 
